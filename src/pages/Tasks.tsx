@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Circle, CheckCircle2, Star, Calendar as CalendarIcon, Tag, Plus, MoreHorizontal, ChevronRight, Edit, Trash2, X, Check, XCircle } from 'lucide-react';
+import { Circle, CheckCircle2, Calendar as CalendarIcon, Tag, Plus, MoreHorizontal, Edit, Trash2, X, Check, XCircle } from 'lucide-react';
 import { useTag } from '../context/TagContext';
 
 interface Task {
@@ -175,23 +175,6 @@ export const Tasks = () => {
     const activeTasks = filteredTasks.filter(t => !t.completed);
     const completedTasks = filteredTasks.filter(t => t.completed);
 
-    const getPriorityColor = (priority: string) => {
-        switch (priority) {
-            case 'high': return 'text-red-500 border-red-200';
-            case 'medium': return 'text-orange-500 border-orange-200';
-            case 'low': return 'text-blue-500 border-blue-200';
-            default: return 'text-gray-500 border-gray-200';
-        }
-    };
-
-    const getPriorityBadgeColor = (priority: string) => {
-        switch (priority) {
-            case 'high': return 'bg-red-50 text-red-600 border-red-200';
-            case 'medium': return 'bg-orange-50 text-orange-600 border-orange-200';
-            case 'low': return 'bg-blue-50 text-blue-600 border-blue-200';
-            default: return 'bg-gray-50 text-gray-600 border-gray-200';
-        }
-    };
 
     const TaskItem = ({ task, level = 0 }: { task: Task; level?: number }) => {
         const isEditing = editingTaskId === task.id;

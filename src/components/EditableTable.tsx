@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Trash2, GripVertical } from 'lucide-react';
 
 interface EditableTableProps {
@@ -21,7 +21,6 @@ export const EditableTable = ({ html, onChange }: EditableTableProps) => {
     const [resizingColumn, setResizingColumn] = useState<number | null>(null);
     const [startX, setStartX] = useState<number>(0);
     const [startWidth, setStartWidth] = useState<number>(0);
-    const tableRef = useRef<HTMLTableElement>(null);
 
     // Parse HTML table into 2D array of cells
     useEffect(() => {
@@ -277,7 +276,7 @@ export const EditableTable = ({ html, onChange }: EditableTableProps) => {
         setResizingColumn(colIndex);
         setStartX(e.clientX);
 
-        // Get current width from the column
+        // Get current width from column
         const currentWidth = tableData[0]?.[colIndex]?.width;
         if (currentWidth && currentWidth.endsWith('px')) {
             setStartWidth(parseInt(currentWidth));
@@ -296,7 +295,7 @@ export const EditableTable = ({ html, onChange }: EditableTableProps) => {
             const newWidth = Math.max(50, startWidth + diff); // Minimum width of 50px
 
             const newData = [...tableData];
-            // Update width for all rows in the column
+            // Update width for all rows in column
             for (let i = 0; i < newData.length; i++) {
                 newData[i][resizingColumn] = {
                     ...newData[i][resizingColumn],
@@ -433,10 +432,10 @@ export const EditableTable = ({ html, onChange }: EditableTableProps) => {
         const newData = [...tableData];
         const draggedRowData = newData[draggedRow];
 
-        // Remove the dragged row
+        // Remove dragged row
         newData.splice(draggedRow, 1);
 
-        // Insert the dragged row at the new position
+        // Insert dragged row at new position
         const insertIndex = draggedRow < targetRowIndex ? targetRowIndex - 1 : targetRowIndex;
         newData.splice(insertIndex, 0, draggedRowData);
 

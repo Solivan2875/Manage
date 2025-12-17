@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
     const [searchQuery, setSearchQuery] = useState('');
-    const [isSearchFocused, setIsSearchFocused] = useState(false);
     const [showSearchResults, setShowSearchResults] = useState(false);
     const searchInputRef = useRef<HTMLInputElement>(null);
     const navigate = useNavigate();
@@ -110,11 +109,9 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 onFocus={() => {
-                                    setIsSearchFocused(true);
                                     if (searchQuery.trim()) setShowSearchResults(true);
                                 }}
                                 onBlur={() => {
-                                    setIsSearchFocused(false);
                                     // Delay hiding results to allow click on result
                                     setTimeout(() => setShowSearchResults(false), 200);
                                 }}

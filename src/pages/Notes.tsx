@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from 'react';
-import { ChevronRight, Star, Tag, Clock, MoreHorizontal, Trash2, Archive, Share2, Plus, Edit, Check, X, XCircle } from 'lucide-react';
+import { useState } from 'react';
+import { ChevronRight, Star, Tag, Clock, MoreHorizontal, Trash2, Plus, Edit, XCircle } from 'lucide-react';
 import { useTag } from '../context/TagContext';
 import { useNavigate } from 'react-router-dom';
 

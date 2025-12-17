@@ -29,7 +29,7 @@ interface EmbedPlaceholderProps {
     onDelete: () => void;
 }
 
-const EmbedPlaceholder = ({ type, embedCode, onEdit, onDelete }: EmbedPlaceholderProps) => {
+const EmbedPlaceholder = ({ type, onEdit, onDelete }: EmbedPlaceholderProps) => {
     const isYouTube = type === 'youtube';
     const Icon = isYouTube ? Play : FileText;
     const title = isYouTube ? 'YouTube Video' : 'PDF Document';
@@ -693,7 +693,6 @@ export const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorP
 
                                 // Handle text parts
                                 let textContent = part;
-                                const isLastPart = index === parts.length - 1;
 
                                 return (
                                     <div key={`text-${index}`}>
