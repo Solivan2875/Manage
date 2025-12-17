@@ -1,0 +1,67 @@
+/**
+ * MaxNote Layout Override - Force 3-panel horizontal layout
+ * This file uses extremely specific selectors to override all existing styles
+ */
+
+/* Critical: Force flexbox on the main app container */
+[data-react-class="NoteEditorApp"],
+[data-react-class="NoteEditorApp"] > div,
+.maxnote-full-app {
+  display: flex !important;
+  flex-direction: row !important;
+  height: 100% !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Force all three panels to be in a row */
+.maxnote-full-app > * {
+  float: none !important;
+  clear: none !important;
+  display: flex !important;
+}
+
+/* Left Sidebar - Green/Turquoise */
+.maxnote-full-app > .left-sidebar {
+  width: 220px !important;
+  min-width: 220px !important;
+  max-width: 220px !important;
+  flex: 0 0 220px !important;
+  order: 1 !important;
+  height: 100% !important;
+}
+
+/* Middle Panel - Notes List */
+.maxnote-full-app > .notes-list-panel {
+  width: 320px !important;
+  min-width: 320px !important;
+  max-width: 320px !important;
+  flex: 0 0 320px !important;
+  order: 2 !important;
+  height: 100% !important;
+}
+
+/* Right Panel - Editor */
+.maxnote-full-app > .note-editor-panel {
+  flex: 1 1 auto !important;
+  order: 3 !important;
+  width: auto !important;
+  min-width: 400px !important;
+  height: 100% !important;
+}
+
+/* Ensure no line breaks */
+.maxnote-full-app::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Override any display:block or display:inline */
+.left-sidebar,
+.notes-list-panel,
+.note-editor-panel {
+  display: flex !important;
+  flex-direction: column !important;
+}

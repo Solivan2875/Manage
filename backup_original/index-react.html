@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplicativo React - Funcionando</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        #root {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 700px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        h2 {
+            color: #4c51bf;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        h3 {
+            color: #5a67d8;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .counter {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .counter-value {
+            font-size: 64px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 30px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        button.reset {
+            background: #ed8936;
+        }
+
+        button.reset:hover {
+            background: #dd6b20;
+        }
+
+        .status {
+            text-align: center;
+            padding: 18px;
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-weight: bold;
+            font-size: 18px;
+            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 12px 15px;
+            margin: 10px 0;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #48bb78;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease;
+        }
+
+        .feature-list li:hover {
+            transform: translateX(5px);
+        }
+
+        .feature-list li:before {
+            content: "✓ ";
+            color: #48bb78;
+            font-weight: bold;
+            font-size: 20px;
+            margin-right: 10px;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .info-item {
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+        }
+
+        .info-item strong {
+            color: #667eea;
+            display: inline-block;
+            min-width: 150px;
+        }
+
+        .loading {
+            text-align: center;
+            color: #667eea;
+            font-size: 20px;
+            padding: 40px;
+        }
+
+        .error {
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            box-shadow: 0 4px 12px rgba(245, 101, 101, 0.3);
+        }
+
+        .success-badge {
+            display: inline-block;
+            background: #48bb78;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root">
+        <div class="loading">⏳ Carregando React...</div>
+    </div>
+
+    <!-- Carregar bibliotecas React locais -->
+    <script crossorigin src="./assets/js/vendor/react.production.min.js"></script>
+    <script crossorigin src="./assets/js/vendor/react-dom.production.min.js"></script>
+    <script src="./assets/js/vendor/babel.min.js"></script>
+
+    <!-- Aplicativo React -->
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function App() {
+            const [contador, setContador] = useState(0);
+            const [mensagem, setMensagem] = useState('Aplicativo iniciado com sucesso!');
+            const [cliques, setCliques] = useState(0);
+
+            useEffect(() => {
+                setTimeout(() => {
+                    setMensagem('✓ React está funcionando perfeitamente!');
+                }, 300);
+            }, []);
+
+            const incrementar = () => {
+                const novoValor = contador + 1;
+                setContador(novoValor);
+                setCliques(cliques + 1);
+                setMensagem(`🚀 Incrementado! Valor: ${novoValor}`);
+            };
+
+            const decrementar = () => {
+                const novoValor = contador - 1;
+                setContador(novoValor);
+                setCliques(cliques + 1);
+                setMensagem(`📉 Decrementado! Valor: ${novoValor}`);
+            };
+
+            const resetar = () => {
+                setContador(0);
+                setCliques(cliques + 1);
+                setMensagem('🔄 Contador resetado!');
+            };
+
+            return (
+                <div>
+                    <h1>
+                        ⚛️ Aplicativo React Funcionando
+                        <span className="success-badge">ONLINE</span>
+                    </h1>
+                    <p className="subtitle">Teste completo das funcionalidades React</p>
+
+                    <div className="status">
+                        {mensagem}
+                    </div>
+
+                    <div className="card">
+                        <h2>📦 Bibliotecas Carregadas</h2>
+                        <ul className="feature-list">
+                            <li>React {React.version} Production Build</li>
+                            <li>ReactDOM {ReactDOM.version}</li>
+                            <li>Babel Standalone (Transpilador JSX)</li>
+                            <li>React Hooks (useState, useEffect)</li>
+                            <li>Componentes Funcionais</li>
+                            <li>Event Handlers & State Management</li>
+                        </ul>
+                    </div>
+
+                    <div className="counter">
+                        <h2>🎯 Contador Interativo</h2>
+                        <div className="counter-value">{contador}</div>
+                        <div className="button-group">
+                            <button onClick={decrementar}>➖ Decrementar</button>
+                            <button className="reset" onClick={resetar}>🔄 Resetar</button>
+                            <button onClick={incrementar}>➕ Incrementar</button>
+                        </div>
+                    </div>
+
+                    <div className="card">
+                        <h3>📊 Estatísticas da Sessão</h3>
+                        <div className="info-grid">
+                            <div className="info-item">
+                                <strong>Valor Atual:</strong> {contador}
+                            </div>
+                            <div className="info-item">
+                                <strong>Total de Cliques:</strong> {cliques}
+                            </div>
+                            <div className="info-item">
+                                <strong>Versão React:</strong> {React.version}
+                            </div>
+                            <div className="info-item">
+                                <strong>Versão ReactDOM:</strong> {ReactDOM.version}
+                            </div>
+                            <div className="info-item">
+                                <strong>Modo de Renderização:</strong> Client-Side Rendering (CSR)
+                            </div>
+                            <div className="info-item">
+                                <strong>Status do Sistema:</strong> ✓ Operacional
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Verificar se React foi carregado corretamente
+        window.addEventListener('DOMContentLoaded', () => {
+            if (typeof React === 'undefined' || typeof ReactDOM === 'undefined') {
+                document.getElementById('root').innerHTML = `
+                    <div class="error">
+                        <h2>❌ Erro ao carregar React</h2>
+                        <p>As bibliotecas React não foram carregadas corretamente.</p>
+                        <p>Verifique se os arquivos estão no diretório correto:</p>
+                        <ul>
+                            <li>./assets/js/vendor/react.production.min.js</li>
+                            <li>./assets/js/vendor/react-dom.production.min.js</li>
+                            <li>./assets/js/vendor/babel.min.js</li>
+                        </ul>
+                    </div>
+                `;
+            } else {
+                // Renderizar o aplicativo
+                const root = ReactDOM.createRoot(document.getElementById('root'));
+                root.render(<App />);
+            }
+        });
+    </script>
+</body>
+</html>

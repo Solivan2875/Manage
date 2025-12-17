@@ -1,0 +1,27 @@
+{
+  "name": "MaxNote",
+  "short_name": "MaxNote",
+  "display": "standalone",
+  "display_override": ["minimal-ui"],
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "../assets/images/logo/amplenote_icon-192-1f95777eaaec10b60f46a71f489d4439373fc44418f77e97a8f630b874eca16c.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "../assets/images/logo/amplenote_icon-512-fc6a09bf42c81c2fcd4cf13d62cdad77dd119ff2c4600c450ba61043b9cf40d9.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "prefer_related_applications": true,
+  "related_applications": [
+    {
+      "platform": "play",
+      "id": "com.amplenote"
+    }
+  ]
+}

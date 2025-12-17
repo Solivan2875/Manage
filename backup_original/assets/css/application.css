@@ -1,0 +1,815 @@
+/**
+ * Allows you to use retina images at various pixel densities.
+ * Examples:
+ *
+ *   @include retina(/images/mypic.jpg, 2);
+ *   @include retina(/images/mypic.jpg, 3, 100px 100px, left top no-repeat transparent);
+ *
+ * @param  {Value}  $path               The path to the file name minus extension.
+ * @param  {Number} $cap:    2          The highest pixel density level images exist for.
+ * @param  {Value}  $size:   auto auto  The intended width of the rendered image.
+ * @param  {Value}  $extras: null       Any other `background` values to be added.
+ */
+/* See http://google.github.io/material-design-icons/#icon-font-for-the-web */
+@font-face {
+  font-family: "Material Icons";
+  font-style: normal;
+  font-weight: 400;
+  src: url(../fonts/materialicons-latin-400normal-dafdbac44033fa5944dd6dfc4faf59c0fdee74e776d27b840c9738846933d976.woff2) format("woff2"), url(../fonts/materialicons-latin-400normal-24c05c1da6bf6084fcb8ad3e17350c7d002342eb0ed747a02329f1b5ec858b0d.woff) format("woff");
+}
+.material-icons {
+  font-family: "Material Icons";
+  font-weight: normal;
+  font-style: normal;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+  /* Support for IE. */
+  font-feature-settings: "liga";
+  display: inline-block;
+  font-size: 24px; /* Preferred icon size */
+  line-height: 1;
+}
+
+/* roboto-regular - latin */
+@font-face {
+  font-display: swap;
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  src: local(""), url(../fonts/roboto-v20-latin-regular-226f9e8b0157036149b2807307f7a1db204e52f66b7c0c64c9c8cb3913ec953b.woff2) format("woff2"), url(../fonts/roboto-v20-latin-regular-8e3f1691e6f8fb5cc9c7484c74b650080caddbc4618e94ad4681001ef15dc7d4.woff) format("woff");
+}
+/* roboto-italic - latin */
+@font-face {
+  font-display: swap;
+  font-family: "Roboto";
+  font-style: italic;
+  font-weight: 400;
+  src: local(""), url(../fonts/roboto-v20-latin-italic-88ae4e700940da34eb8a91e43c50095d02ac21c3c38dad5e994d1005e0992e2f.woff2) format("woff2"), url(../fonts/roboto-v20-latin-italic-b0bd6be6d316a196fa8cbceec38a0d4732473e958cf3dd93455dbc61310d1196.woff) format("woff");
+}
+/* roboto-700 - latin */
+@font-face {
+  font-display: swap;
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 700;
+  src: local(""), url(../fonts/roboto-v20-latin-700-ca0f03b94bf1251df280675a5d04500471c558454ef7176c21ac229603bcb069.woff2) format("woff2"), url(../fonts/roboto-v20-latin-700-b5ed4043cc90a1179a774d84e14d295f85fc967f6d5d7aebb21013423194baaa.woff) format("woff");
+}
+/* roboto-700italic - latin */
+@font-face {
+  font-display: swap;
+  font-family: "Roboto";
+  font-style: italic;
+  font-weight: 700;
+  src: local(""), url(../fonts/roboto-v20-latin-700italic-66104f66ec84087d9c7953a1d7bb88716696448cf081ff7cb24c3db9eb5840a1.woff2) format("woff2"), url(../fonts/roboto-v20-latin-700italic-d9805f05090418206a61f2ad32bbb111c5a55743db81cd5faa1b0cdbcd160b63.woff) format("woff");
+}
+/*! normalize.css v8.0.0 | MIT License | github.com/necolas/normalize.css */
+/* Document
+   ========================================================================== */
+/**
+ * 1. Correct the line height in all browsers.
+ * 2. Prevent adjustments of font size after orientation changes in iOS.
+ */
+html {
+  line-height: 1.15; /* 1 */
+  -webkit-text-size-adjust: 100%; /* 2 */
+}
+
+/* Sections
+   ========================================================================== */
+/**
+ * Remove the margin in all browsers.
+ */
+body {
+  margin: 0;
+}
+
+/**
+ * Correct the font size and margin on `h1` elements within `section` and
+ * `article` contexts in Chrome, Firefox, and Safari.
+ */
+h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+
+/* Grouping content
+   ========================================================================== */
+/**
+ * 1. Add the correct box sizing in Firefox.
+ * 2. Show the overflow in Edge and IE.
+ */
+hr {
+  box-sizing: content-box; /* 1 */
+  height: 0; /* 1 */
+  overflow: visible; /* 2 */
+}
+
+/**
+ * 1. Correct the inheritance and scaling of font size in all browsers.
+ * 2. Correct the odd `em` font sizing in all browsers.
+ */
+pre {
+  font-family: monospace, monospace; /* 1 */
+  font-size: 1em; /* 2 */
+}
+
+/* Text-level semantics
+   ========================================================================== */
+/**
+ * Remove the gray background on active links in IE 10.
+ */
+a {
+  background-color: transparent;
+}
+
+/**
+ * 1. Remove the bottom border in Chrome 57-
+ * 2. Add the correct text decoration in Chrome, Edge, IE, Opera, and Safari.
+ */
+abbr[title] {
+  border-bottom: none; /* 1 */
+  text-decoration: underline; /* 2 */
+  text-decoration: underline dotted; /* 2 */
+}
+
+/**
+ * Add the correct font weight in Chrome, Edge, and Safari.
+ */
+b,
+strong {
+  font-weight: bolder;
+}
+
+/**
+ * 1. Correct the inheritance and scaling of font size in all browsers.
+ * 2. Correct the odd `em` font sizing in all browsers.
+ */
+code,
+kbd,
+samp {
+  font-family: monospace, monospace; /* 1 */
+  font-size: 1em; /* 2 */
+}
+
+/**
+ * Add the correct font size in all browsers.
+ */
+small {
+  font-size: 80%;
+}
+
+/**
+ * Prevent `sub` and `sup` elements from affecting the line height in
+ * all browsers.
+ */
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+sup {
+  top: -0.5em;
+}
+
+/* Embedded content
+   ========================================================================== */
+/**
+ * Remove the border on images inside links in IE 10.
+ */
+img {
+  border-style: none;
+}
+
+/* Forms
+   ========================================================================== */
+/**
+ * 1. Change the font styles in all browsers.
+ * 2. Remove the margin in Firefox and Safari.
+ */
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: inherit; /* 1 */
+  font-size: 100%; /* 1 */
+  line-height: 1.15; /* 1 */
+  margin: 0; /* 2 */
+}
+
+/**
+ * Show the overflow in IE.
+ * 1. Show the overflow in Edge.
+ */
+button,
+input { /* 1 */
+  overflow: visible;
+}
+
+/**
+ * Remove the inheritance of text transform in Edge, Firefox, and IE.
+ * 1. Remove the inheritance of text transform in Firefox.
+ */
+button,
+select { /* 1 */
+  text-transform: none;
+}
+
+/**
+ * Correct the inability to style clickable types in iOS and Safari.
+ */
+button,
+[type=button],
+[type=reset],
+[type=submit] {
+  -webkit-appearance: button;
+}
+
+/**
+ * Remove the inner border and padding in Firefox.
+ */
+button::-moz-focus-inner,
+[type=button]::-moz-focus-inner,
+[type=reset]::-moz-focus-inner,
+[type=submit]::-moz-focus-inner {
+  border-style: none;
+  padding: 0;
+}
+
+/**
+ * Restore the focus styles unset by the previous rule.
+ */
+button:-moz-focusring,
+[type=button]:-moz-focusring,
+[type=reset]:-moz-focusring,
+[type=submit]:-moz-focusring {
+  outline: 1px dotted ButtonText;
+}
+
+/**
+ * Correct the padding in Firefox.
+ */
+fieldset {
+  padding: 0.35em 0.75em 0.625em;
+}
+
+/**
+ * 1. Correct the text wrapping in Edge and IE.
+ * 2. Correct the color inheritance from `fieldset` elements in IE.
+ * 3. Remove the padding so developers are not caught out when they zero out
+ *    `fieldset` elements in all browsers.
+ */
+legend {
+  box-sizing: border-box; /* 1 */
+  color: inherit; /* 2 */
+  display: table; /* 1 */
+  max-width: 100%; /* 1 */
+  padding: 0; /* 3 */
+  white-space: normal; /* 1 */
+}
+
+/**
+ * Add the correct vertical alignment in Chrome, Firefox, and Opera.
+ */
+progress {
+  vertical-align: baseline;
+}
+
+/**
+ * Remove the default vertical scrollbar in IE 10+.
+ */
+textarea {
+  overflow: auto;
+}
+
+/**
+ * 1. Add the correct box sizing in IE 10.
+ * 2. Remove the padding in IE 10.
+ */
+[type=checkbox],
+[type=radio] {
+  box-sizing: border-box; /* 1 */
+  padding: 0; /* 2 */
+}
+
+/**
+ * Correct the cursor style of increment and decrement buttons in Chrome.
+ */
+[type=number]::-webkit-inner-spin-button,
+[type=number]::-webkit-outer-spin-button {
+  height: auto;
+}
+
+/**
+ * 1. Correct the odd appearance in Chrome and Safari.
+ * 2. Correct the outline style in Safari.
+ */
+[type=search] {
+  -webkit-appearance: textfield; /* 1 */
+  outline-offset: -2px; /* 2 */
+}
+
+/**
+ * Remove the inner padding in Chrome and Safari on macOS.
+ */
+[type=search]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/**
+ * 1. Correct the inability to style clickable types in iOS and Safari.
+ * 2. Change font properties to `inherit` in Safari.
+ */
+::-webkit-file-upload-button {
+  -webkit-appearance: button; /* 1 */
+  font: inherit; /* 2 */
+}
+
+/* Interactive
+   ========================================================================== */
+/*
+ * Add the correct display in Edge, IE 10+, and Firefox.
+ */
+details {
+  display: block;
+}
+
+/*
+ * Add the correct display in all browsers.
+ */
+summary {
+  display: list-item;
+}
+
+/* Misc
+   ========================================================================== */
+/**
+ * Add the correct display in IE 10+.
+ */
+template {
+  display: none;
+}
+
+/**
+ * Add the correct display in IE 10.
+ */
+[hidden] {
+  display: none;
+}
+
+html {
+  box-sizing: border-box;
+  line-height: 1.5;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+}
+@media only screen and (min-width: 0) {
+  html {
+    font-size: 14px;
+  }
+}
+@media only screen and (min-width: 992px) {
+  html {
+    font-size: 14.5px;
+  }
+}
+@media only screen and (min-width: 1200px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+body {
+  color: var(--color-text-high-contrast);
+}
+
+a {
+  color: var(--color-text-link);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+a.external-link::after {
+  font-family: "Material Icons";
+  font-weight: normal;
+  font-style: normal;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+  /* Support for IE. */
+  font-feature-settings: "liga";
+  content: "open_in_new";
+  margin-left: 5px;
+  position: relative;
+  top: 2px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+em {
+  font-style: italic;
+}
+
+b, strong {
+  font-weight: 700;
+}
+
+small {
+  font-size: 75%;
+}
+
+body:not(.themeable) {
+  --color-background-primary-rgb: 255, 255, 255;
+  --color-background-primary: #fff;
+  --color-background-secondary: #f9fbfc;
+  --color-background-tertiary: #edf1f5;
+  --color-background-popup: #fff;
+  --color-background-popup-small: #2f3740;
+  --color-background-scrim: rgba(0, 0, 0, 0.32);
+  --color-background-scrim-high-contrast: rgba(255, 255, 255, 0.8);
+  --color-border-primary: #e1e6eb;
+  --color-border-secondary: #e1e6eb;
+  --color-border-tertiary: #b4bfcc;
+  --color-background-element-high-contrast: #b4bfcc;
+  --color-background-element-medium-contrast: #e1e6eb;
+  --color-background-element-medium-contrast-rgb: 225, 230, 235;
+  --color-background-element-low-contrast: #edf1f5;
+  --color-background-action-high-contrast: #3e92cc;
+  --color-background-action-high-contrast-rgb: 62, 146, 204;
+  --color-background-action-high-contrast-alt: #afd8f4;
+  --color-background-action-medium-contrast: #d3e8f5;
+  --color-background-action-low-contrast: #e6f4fe;
+  --color-background-error-high-contrast: #f5624c;
+  --color-background-error-medium-contrast: #feeae7;
+  --color-text-high-contrast: #2f3740;
+  --color-text-medium-contrast: #626d7a;
+  --color-text-low-contrast: #8593a3;
+  --color-text-lower-contrast: #b4bfcc;
+  --color-text-high-contrast-inverse: #fff;
+  --color-text-link: #3e92cc;
+  --color-text-reversed: #fff;
+  --color-text-status: #0bbf7d;
+  --color-text-error-high-contrast: #da3317;
+  --color-text-error-medium-contrast: #f5624c;
+  --color-text-error-low-contrast: #ffb238;
+  --color-text-error-low-contrast-rgb: 255, 178, 56;
+  --color-text-button: #fff;
+  --color-text-reversed-link: #afd8f4;
+  --color-text-nav-high-contrast: #edf1f5;
+  --color-text-nav-medium-contrast: #B4BFCC;
+  --color-text-nav-low-contrast: #b4bfcc;
+  --color-text-nav-lower-contrast: #626d7a;
+  --color-background-banner: #2c3b47;
+  --color-background-code: rgba(180, 191, 204, 0.32);
+  --color-background-header: #335164;
+  --color-background-highlight: rgba(255, 178, 56, 0.32);
+  --color-background-note-menu-button: #e1e6eb;
+  --color-background-reversed: #8593a3;
+  --color-background-reversed-secondary: #626d7a;
+  --color-background-reversed-secondary-rgb: 98, 109, 122;
+  --color-background-search-bar: #2a4052;
+  --color-background-task-value: #e1e6eb;
+  --color-background-banner-alt: #0BA274;
+  --color-background-dialog: #2c3b47;
+  --color-background-nav: #2c3b47;
+  --color-background-nav-active: #3c5061;
+  --color-background-nav-avatar: #2f4858;
+  --color-background-nav-divider: #2f4858;
+  --color-background-nav-menu: #2f4858;
+  --color-background-nav-menu-button: #1c2b37;
+  --color-background-nav-menu-divider: #2c3b47;
+  --color-background-nav-menu-expanded: #1c2b37;
+  --color-background-logo: #fff;
+  --color-overlay-low-contrast: #3e92cc;
+  --color-overlay-high-contrast: #fff;
+  --opacity-overlay-low-contrast-hover: 0.12;
+  --opacity-overlay-low-contrast-focus: 0.16;
+  --opacity-overlay-low-contrast-press: 0.14;
+  --opacity-overlay-high-contrast-hover: 0.08;
+  --opacity-overlay-high-contrast-focus: 0.16;
+  --opacity-overlay-high-contrast-press: 0.12;
+  --mdc-theme-error: #da3317;
+  --mdc-theme-on-primary: #fff;
+  --mdc-theme-on-secondary: #f9fbfc;
+  --mdc-theme-primary: #3e92cc;
+  --mdc-theme-secondary: #2c3b47;
+  --mdc-theme-surface: #fff;
+  --palette-color-1: #FFE0DC;
+  --palette-color-2: #FFE6D4;
+  --palette-color-3: #FFF7CB;
+  --palette-color-4: #EEFDD7;
+  --palette-color-5: #DAFFEF;
+  --palette-color-6: #DEFBFF;
+  --palette-color-7: #E3F2FF;
+  --palette-color-8: #F0E7FF;
+  --palette-color-9: #FCEBFF;
+  --palette-color-10: #FFE1EF;
+  --palette-color-11: #FFFFFF;
+  --palette-color-12: #F2998C;
+  --palette-color-13: #F9B68D;
+  --palette-color-14: #F3DE6C;
+  --palette-color-15: #BBE077;
+  --palette-color-16: #65D2AA;
+  --palette-color-17: #87D7E4;
+  --palette-color-18: #84B6D9;
+  --palette-color-19: #B49EE2;
+  --palette-color-20: #DA99E0;
+  --palette-color-21: #E893BD;
+  --palette-color-22: #DFDFDF;
+  --palette-color-23: #F5614C;
+  --palette-color-24: #F8914D;
+  --palette-color-25: #F8D616;
+  --palette-color-26: #9AD62A;
+  --palette-color-27: #3CC07D;
+  --palette-color-28: #44C9DE;
+  --palette-color-29: #3E92CC;
+  --palette-color-30: #8D68DA;
+  --palette-color-31: #CE60D7;
+  --palette-color-32: #E5569E;
+  --palette-color-33: #ABACAD;
+  --palette-color-34: #AB4435;
+  --palette-color-35: #B26536;
+  --palette-color-36: #AD950D;
+  --palette-color-37: #6B961B;
+  --palette-color-38: #258658;
+  --palette-color-39: #2F8D9A;
+  --palette-color-40: #2C658E;
+  --palette-color-41: #614998;
+  --palette-color-42: #8F4395;
+  --palette-color-43: #A03D6E;
+  --palette-color-44: #777879;
+  --palette-color-45: #62271D;
+  --palette-color-46: #663A1D;
+  --palette-color-47: #63550A;
+  --palette-color-48: #3D550F;
+  --palette-color-49: #114C33;
+  --palette-color-50: #1A5058;
+  --palette-color-51: #183B51;
+  --palette-color-52: #392A57;
+  --palette-color-53: #532555;
+  --palette-color-54: #5C2240;
+  --palette-color-55: #000000;
+  --victory-value-color-0: #E1E6EB;
+  --victory-value-color-0-text: #B4BFCC;
+  --victory-value-color-1: #C6E6F6;
+  --victory-value-color-1-text: #7EC4E7;
+  --victory-value-color-2: #96E1E8;
+  --victory-value-color-2-text: #5DCBD5;
+  --victory-value-color-3: #55D3BE;
+  --victory-value-color-3-text: #38CCB3;
+  --victory-value-color-4: #0BBF7D;
+  --victory-value-color-4-text: #0BBF7D;
+}
+
+body.themeable:not(.theme-dark) {
+  --color-background-primary-rgb: 255, 255, 255;
+  --color-background-primary: #fff;
+  --color-background-secondary: #f9fbfc;
+  --color-background-tertiary: #edf1f5;
+  --color-background-popup: #fff;
+  --color-background-popup-small: #2f3740;
+  --color-background-scrim: rgba(0, 0, 0, 0.32);
+  --color-background-scrim-high-contrast: rgba(255, 255, 255, 0.8);
+  --color-border-primary: #e1e6eb;
+  --color-border-secondary: #e1e6eb;
+  --color-border-tertiary: #b4bfcc;
+  --color-background-element-high-contrast: #b4bfcc;
+  --color-background-element-medium-contrast: #e1e6eb;
+  --color-background-element-medium-contrast-rgb: 225, 230, 235;
+  --color-background-element-low-contrast: #edf1f5;
+  --color-background-action-high-contrast: #3e92cc;
+  --color-background-action-high-contrast-rgb: 62, 146, 204;
+  --color-background-action-high-contrast-alt: #afd8f4;
+  --color-background-action-medium-contrast: #d3e8f5;
+  --color-background-action-low-contrast: #e6f4fe;
+  --color-background-error-high-contrast: #f5624c;
+  --color-background-error-medium-contrast: #feeae7;
+  --color-text-high-contrast: #2f3740;
+  --color-text-medium-contrast: #626d7a;
+  --color-text-low-contrast: #8593a3;
+  --color-text-lower-contrast: #b4bfcc;
+  --color-text-high-contrast-inverse: #fff;
+  --color-text-link: #3e92cc;
+  --color-text-reversed: #fff;
+  --color-text-status: #0bbf7d;
+  --color-text-error-high-contrast: #da3317;
+  --color-text-error-medium-contrast: #f5624c;
+  --color-text-error-low-contrast: #ffb238;
+  --color-text-error-low-contrast-rgb: 255, 178, 56;
+  --color-text-button: #fff;
+  --color-text-reversed-link: #afd8f4;
+  --color-text-nav-high-contrast: #edf1f5;
+  --color-text-nav-medium-contrast: #B4BFCC;
+  --color-text-nav-low-contrast: #b4bfcc;
+  --color-text-nav-lower-contrast: #626d7a;
+  --color-background-banner: #2c3b47;
+  --color-background-code: rgba(180, 191, 204, 0.32);
+  --color-background-header: #335164;
+  --color-background-highlight: rgba(255, 178, 56, 0.32);
+  --color-background-note-menu-button: #e1e6eb;
+  --color-background-reversed: #8593a3;
+  --color-background-reversed-secondary: #626d7a;
+  --color-background-reversed-secondary-rgb: 98, 109, 122;
+  --color-background-search-bar: #2a4052;
+  --color-background-task-value: #e1e6eb;
+  --color-background-banner-alt: #0BA274;
+  --color-background-dialog: #2c3b47;
+  --color-background-nav: #2c3b47;
+  --color-background-nav-active: #3c5061;
+  --color-background-nav-avatar: #2f4858;
+  --color-background-nav-divider: #2f4858;
+  --color-background-nav-menu: #2f4858;
+  --color-background-nav-menu-button: #1c2b37;
+  --color-background-nav-menu-divider: #2c3b47;
+  --color-background-nav-menu-expanded: #1c2b37;
+  --color-background-logo: #fff;
+  --color-overlay-low-contrast: #3e92cc;
+  --color-overlay-high-contrast: #fff;
+  --opacity-overlay-low-contrast-hover: 0.12;
+  --opacity-overlay-low-contrast-focus: 0.16;
+  --opacity-overlay-low-contrast-press: 0.14;
+  --opacity-overlay-high-contrast-hover: 0.08;
+  --opacity-overlay-high-contrast-focus: 0.16;
+  --opacity-overlay-high-contrast-press: 0.12;
+  --mdc-theme-error: #da3317;
+  --mdc-theme-on-primary: #fff;
+  --mdc-theme-on-secondary: #f9fbfc;
+  --mdc-theme-primary: #3e92cc;
+  --mdc-theme-secondary: #2c3b47;
+  --mdc-theme-surface: #fff;
+  --palette-color-1: #FFE0DC;
+  --palette-color-2: #FFE6D4;
+  --palette-color-3: #FFF7CB;
+  --palette-color-4: #EEFDD7;
+  --palette-color-5: #DAFFEF;
+  --palette-color-6: #DEFBFF;
+  --palette-color-7: #E3F2FF;
+  --palette-color-8: #F0E7FF;
+  --palette-color-9: #FCEBFF;
+  --palette-color-10: #FFE1EF;
+  --palette-color-11: #FFFFFF;
+  --palette-color-12: #F2998C;
+  --palette-color-13: #F9B68D;
+  --palette-color-14: #F3DE6C;
+  --palette-color-15: #BBE077;
+  --palette-color-16: #65D2AA;
+  --palette-color-17: #87D7E4;
+  --palette-color-18: #84B6D9;
+  --palette-color-19: #B49EE2;
+  --palette-color-20: #DA99E0;
+  --palette-color-21: #E893BD;
+  --palette-color-22: #DFDFDF;
+  --palette-color-23: #F5614C;
+  --palette-color-24: #F8914D;
+  --palette-color-25: #F8D616;
+  --palette-color-26: #9AD62A;
+  --palette-color-27: #3CC07D;
+  --palette-color-28: #44C9DE;
+  --palette-color-29: #3E92CC;
+  --palette-color-30: #8D68DA;
+  --palette-color-31: #CE60D7;
+  --palette-color-32: #E5569E;
+  --palette-color-33: #ABACAD;
+  --palette-color-34: #AB4435;
+  --palette-color-35: #B26536;
+  --palette-color-36: #AD950D;
+  --palette-color-37: #6B961B;
+  --palette-color-38: #258658;
+  --palette-color-39: #2F8D9A;
+  --palette-color-40: #2C658E;
+  --palette-color-41: #614998;
+  --palette-color-42: #8F4395;
+  --palette-color-43: #A03D6E;
+  --palette-color-44: #777879;
+  --palette-color-45: #62271D;
+  --palette-color-46: #663A1D;
+  --palette-color-47: #63550A;
+  --palette-color-48: #3D550F;
+  --palette-color-49: #114C33;
+  --palette-color-50: #1A5058;
+  --palette-color-51: #183B51;
+  --palette-color-52: #392A57;
+  --palette-color-53: #532555;
+  --palette-color-54: #5C2240;
+  --palette-color-55: #000000;
+  --victory-value-color-0: #E1E6EB;
+  --victory-value-color-0-text: #B4BFCC;
+  --victory-value-color-1: #C6E6F6;
+  --victory-value-color-1-text: #7EC4E7;
+  --victory-value-color-2: #96E1E8;
+  --victory-value-color-2-text: #5DCBD5;
+  --victory-value-color-3: #55D3BE;
+  --victory-value-color-3-text: #38CCB3;
+  --victory-value-color-4: #0BBF7D;
+  --victory-value-color-4-text: #0BBF7D;
+}
+
+body.themeable:not(.theme-dark).theme-arctic {
+  --color-background-primary-rgb: 255, 255, 255;
+  --color-background-primary: #FFF;
+  --color-background-secondary: #F9FAFA;
+  --color-background-tertiary: #F2F3F3;
+  --color-background-popup: #FFF;
+  --color-background-popup-small: #303233;
+  --color-background-scrim: rgba(0, 0, 0, 0.32);
+  --color-background-scrim-high-contrast: rgba(255, 255, 255, 0.8);
+  --color-border-primary: #E6E8E8;
+  --color-border-secondary: #E6E8E8;
+  --color-border-tertiary: #B2B6B8;
+  --color-background-element-high-contrast: #B2B6B8;
+  --color-background-element-medium-contrast: #E6E8E8;
+  --color-background-element-medium-contrast-rgb: 230, 232, 232;
+  --color-background-element-low-contrast: #F2F3F3;
+  --color-background-action-high-contrast: #4A748D;
+  --color-background-action-high-contrast-rgb: 74, 116, 141;
+  --color-background-action-high-contrast-alt: #B1DEF0;
+  --color-background-action-medium-contrast: #D8EBF2;
+  --color-background-action-low-contrast: #E4F2F7;
+  --color-background-error-high-contrast: #F5624C;
+  --color-background-error-medium-contrast: #FEEAE7;
+  --color-text-high-contrast: #303233;
+  --color-text-medium-contrast: #6A6D70;
+  --color-text-low-contrast: #929497;
+  --color-text-lower-contrast: #B2B6B8;
+  --color-text-high-contrast-inverse: #FFF;
+  --color-text-link: #1C7DB6;
+  --color-text-reversed: #FFF;
+  --color-text-status: #0BBF7D;
+  --color-text-error-high-contrast: #da3317;
+  --color-text-error-medium-contrast: #F5624C;
+  --color-text-error-low-contrast: #FFB238;
+  --color-text-error-low-contrast-rgb: 255, 178, 56;
+  --color-text-button: #FFF;
+  --color-text-reversed-link: #AADDF2;
+  --color-text-nav-high-contrast: #303233;
+  --color-text-nav-medium-contrast: #5B6673;
+  --color-text-nav-low-contrast: #5F6B78;
+  --color-text-nav-lower-contrast: #88929F;
+  --color-background-banner: #C8D6DB;
+  --color-background-code: rgba(178, 182, 184, 0.32);
+  --color-background-header: #D9E4E8;
+  --color-background-highlight: rgba(255, 178, 56, 0.32);
+  --color-background-note-menu-button: #E4E6E6;
+  --color-background-reversed: #929497;
+  --color-background-reversed-secondary: #6A6D70;
+  --color-background-reversed-secondary-rgb: 106, 109, 112;
+  --color-background-search-bar: #E5EDEF;
+  --color-background-task-value: #E6E8E8;
+  --color-background-banner-alt: #6F99AB;
+  --color-background-dialog: #E5EDEF;
+  --color-background-nav: #E5EDEF;
+  --color-background-nav-active: #D9E4E8;
+  --color-background-nav-avatar: #C8D6DB;
+  --color-background-nav-divider: #C8D6DB;
+  --color-background-nav-menu: #EEF4F6;
+  --color-background-nav-menu-button: #C8D6DB;
+  --color-background-nav-menu-divider: #D9E4E8;
+  --color-background-nav-menu-expanded: #EEF4F6;
+  --color-background-logo: #0BBF7D;
+  --color-overlay-low-contrast: #4A848D;
+  --color-overlay-high-contrast: #fff;
+  --opacity-overlay-low-contrast-hover: 0.12;
+  --opacity-overlay-low-contrast-focus: 0.16;
+  --opacity-overlay-low-contrast-press: 0.14;
+  --opacity-overlay-high-contrast-hover: 0.08;
+  --opacity-overlay-high-contrast-focus: 0.16;
+  --opacity-overlay-high-contrast-press: 0.12;
+  --mdc-theme-error: #F5624C;
+  --mdc-theme-on-primary: #FFF;
+  --mdc-theme-on-secondary: #F9FBFC;
+  --mdc-theme-primary: #4A748D;
+  --mdc-theme-secondary: #E5EDEF;
+  --mdc-theme-surface: #FFF;
+}
+
+/* Continue com o resto do arquivo CSS, adaptando os caminhos dos recursos conforme necessário */

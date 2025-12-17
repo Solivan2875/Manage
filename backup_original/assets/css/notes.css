@@ -1,0 +1,86 @@
+/**
+ * Allows you to use retina images at various pixel densities.
+ * Examples:
+ *
+ *   @include retina(/images/mypic.jpg, 2);
+ *   @include retina(/images/mypic.jpg, 3, 100px 100px, left top no-repeat transparent);
+ *
+ * @param  {Value}  $path               The path to the file name minus extension.
+ * @param  {Number} $cap:    2          The highest pixel density level images exist for.
+ * @param  {Value}  $size:   auto auto  The intended width of the rendered image.
+ * @param  {Value}  $extras: null       Any other `background` values to be added.
+ */
+header.note-header-container.mdc-top-app-bar {
+  background-color: var(--color-background-header);
+}
+header.note-header-container.mdc-top-app-bar .mdc-top-app-bar__row {
+  height: 64px;
+}
+header.note-header-container.mdc-top-app-bar .mdc-top-app-bar__row.width-wrapper {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+header.note-header-container .mdc-top-app-bar__navigation-icon {
+  display: none;
+  margin-right: 4px;
+}
+header.note-header-container .logo-wrapper {
+  width: 268px;
+}
+header.note-header-container .logo-wrapper a {
+  align-items: center;
+  display: flex;
+  height: 64px;
+  justify-content: center;
+  outline: none;
+  width: 40px;
+}
+header.note-header-container .logo-wrapper .ample-svg-logo {
+  height: 28px;
+  width: 28px;
+}
+header.note-header-container .logo-wrapper .ample-svg-logo .logo-icon {
+  fill: var(--color-background-logo);
+}
+header.note-header-container .primary-action-container.collapsed .logo-wrapper {
+  flex-shrink: 0;
+  width: 52px;
+}
+header.note-header-container .primary-action-container.drawer .logo-wrapper {
+  display: none;
+}
+header.note-header-container .primary-action-container.drawer .mdc-top-app-bar__navigation-icon {
+  display: block;
+}
+header.note-header-container .primary-action-container:not(.drawer) {
+  padding: 8px 12px;
+}
+@media print {
+  header.note-header-container {
+    display: none;
+  }
+}
+
+.mdc-top-app-bar--fixed-adjust {
+  padding-top: 64px;
+}
+
+body.has-header-banner .mdc-top-app-bar--fixed-adjust {
+  padding-top: 112px;
+}
+
+.has-header-banner .mdc-top-app-bar--fixed-adjust .pane-with-sidebar,
+.has-header-banner .mdc-top-app-bar--fixed-adjust .pane-with-sidebar > .sidebar,
+.has-header-banner .mdc-top-app-bar--fixed-adjust .primary-side-nav,
+.has-header-banner .mdc-top-app-bar--fixed-adjust .primary-side-nav-content,
+.has-header-banner .mdc-top-app-bar--fixed-adjust .secondary-side-nav,
+.has-header-banner .mdc-top-app-bar--fixed-adjust .secondary-side-nav-content,
+.has-header-banner .mdc-top-app-bar--fixed-adjust .welcome-panel {
+  height: calc(100vh - 112px);
+}
+.has-header-banner .mdc-top-app-bar--fixed-adjust .note-pane .ample-editor .toolbar-wrapper,
+.has-header-banner .mdc-top-app-bar--fixed-adjust .tasks-pane .ample-editor .toolbar-wrapper {
+  top: 112px;
+}

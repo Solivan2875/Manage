@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste React - Aplicativo Funcionando</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #root {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #667eea;
+            margin-top: 0;
+            text-align: center;
+        }
+
+        .card {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .counter {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .counter-value {
+            font-size: 48px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 20px 0;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .status {
+            text-align: center;
+            padding: 15px;
+            background: #48bb78;
+            color: white;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 10px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 6px;
+            border-left: 3px solid #48bb78;
+        }
+
+        .feature-list li:before {
+            content: "✓ ";
+            color: #48bb78;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .error {
+            background: #f56565;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .loading {
+            text-align: center;
+            color: #667eea;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root">
+        <div class="loading">Carregando React...</div>
+    </div>
+
+    <!-- Carregar bibliotecas React via CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Aplicativo React -->
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function App() {
+            const [contador, setContador] = useState(0);
+            const [mensagem, setMensagem] = useState('Aplicativo iniciado!');
+
+            useEffect(() => {
+                setMensagem('React está funcionando perfeitamente!');
+            }, []);
+
+            const incrementar = () => {
+                setContador(contador + 1);
+                setMensagem(`Você clicou ${contador + 1} vez(es)!`);
+            };
+
+            const decrementar = () => {
+                setContador(contador - 1);
+                setMensagem(`Contador decrementado para ${contador - 1}!`);
+            };
+
+            const resetar = () => {
+                setContador(0);
+                setMensagem('Contador resetado!');
+            };
+
+            return (
+                <div>
+                    <h1>✓ Teste do Aplicativo React</h1>
+
+                    <div className="status">
+                        {mensagem}
+                    </div>
+
+                    <div className="card">
+                        <h2>Funcionalidades Carregadas:</h2>
+                        <ul className="feature-list">
+                            <li>React 18.3.1 Production</li>
+                            <li>ReactDOM Production</li>
+                            <li>Babel Standalone</li>
+                            <li>Hooks (useState, useEffect)</li>
+                            <li>Componentes Funcionais</li>
+                            <li>Event Handlers</li>
+                        </ul>
+                    </div>
+
+                    <div className="counter">
+                        <h2>Contador Interativo</h2>
+                        <div className="counter-value">{contador}</div>
+                        <div>
+                            <button onClick={decrementar}>- Decrementar</button>
+                            <button onClick={resetar}>Resetar</button>
+                            <button onClick={incrementar}>Incrementar +</button>
+                        </div>
+                    </div>
+
+                    <div className="card">
+                        <h3>Status do Sistema:</h3>
+                        <p><strong>React Version:</strong> {React.version}</p>
+                        <p><strong>ReactDOM Version:</strong> {ReactDOM.version}</p>
+                        <p><strong>Estado:</strong> Tudo funcionando corretamente!</p>
+                        <p><strong>Renderização:</strong> Client-side rendering ativo</p>
+                    </div>
+                </div>
+            );
+        }
+
+        // Verificar se React foi carregado
+        if (typeof React === 'undefined' || typeof ReactDOM === 'undefined') {
+            document.getElementById('root').innerHTML = `
+                <div class="error">
+                    <h2>Erro ao carregar React</h2>
+                    <p>As bibliotecas React não foram carregadas corretamente.</p>
+                </div>
+            `;
+        } else {
+            // Renderizar o aplicativo
+            const root = ReactDOM.createRoot(document.getElementById('root'));
+            root.render(<App />);
+        }
+    </script>
+</body>
+</html>

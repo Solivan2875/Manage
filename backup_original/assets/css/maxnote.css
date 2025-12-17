@@ -1,0 +1,321 @@
+/**
+ * MaxNote Styles - Override and fix layout
+ * IMPORTANT: These styles override existing CSS to fix the layout
+ */
+
+/* Force body and html to proper dimensions */
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  height: 100vh !important;
+  width: 100vw !important;
+}
+
+/* Fix main container positioning */
+.note-editor-app-container {
+  padding-top: 64px !important;
+  height: 100vh !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+}
+
+/* MaxNote App Layout */
+.maxnote-app {
+  display: flex !important;
+  flex-direction: row !important;
+  height: 100% !important;
+  width: 100% !important;
+  position: relative !important;
+  background: #fafafa !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Sidebar Styles - Fixed Width */
+.maxnote-app .sidebar {
+  width: 280px !important;
+  min-width: 280px !important;
+  max-width: 280px !important;
+  background: white !important;
+  border-right: 1px solid #e0e0e0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+  height: 100% !important;
+  position: relative !important;
+}
+
+/* Sidebar Header */
+.maxnote-app .sidebar-header {
+  padding: 16px 20px !important;
+  border-bottom: 1px solid #e8eaed !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  background: white !important;
+  flex-shrink: 0 !important;
+}
+
+.maxnote-app .sidebar-header h2 {
+  margin: 0 !important;
+  font-size: 20px !important;
+  font-weight: 500 !important;
+  color: #202124 !important;
+  font-family: 'Roboto', sans-serif !important;
+}
+
+/* New Note Button */
+.maxnote-app .new-note-button {
+  background: #1a73e8 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 50% !important;
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  padding: 0 !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12) !important;
+}
+
+.maxnote-app .new-note-button:hover {
+  background: #1557b0 !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2) !important;
+}
+
+.maxnote-app .new-note-button .material-icons {
+  font-size: 24px !important;
+  margin: 0 !important;
+}
+
+/* Notes List */
+.maxnote-app .notes-list {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding: 8px !important;
+}
+
+.maxnote-app .note-item {
+  padding: 12px 16px !important;
+  margin-bottom: 4px !important;
+  background: white !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  border: 1px solid transparent !important;
+}
+
+.maxnote-app .note-item:hover {
+  background: #f8f9fa !important;
+  border-color: #e8eaed !important;
+}
+
+.maxnote-app .note-item.active {
+  background: #e8f0fe !important;
+  border-color: #d2e3fc !important;
+}
+
+.maxnote-app .note-title {
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  color: #202124 !important;
+  margin-bottom: 4px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  font-family: 'Roboto', sans-serif !important;
+}
+
+.maxnote-app .note-preview {
+  font-size: 13px !important;
+  color: #5f6368 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  font-family: 'Roboto', sans-serif !important;
+}
+
+/* Editor Container - Flex Grow */
+.maxnote-app .editor-container {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: white !important;
+  overflow: hidden !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  position: relative !important;
+}
+
+/* Note Editor */
+.maxnote-app .note-editor {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  width: 100% !important;
+}
+
+/* Toolbar */
+.maxnote-app .note-editor-toolbar {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 8px 16px !important;
+  background: white !important;
+  border-bottom: 1px solid #e8eaed !important;
+  min-height: 48px !important;
+  flex-shrink: 0 !important;
+}
+
+.maxnote-app .toolbar-section {
+  display: flex !important;
+  gap: 4px !important;
+}
+
+.maxnote-app .toolbar-button {
+  background: white !important;
+  border: 1px solid #dadce0 !important;
+  border-radius: 4px !important;
+  padding: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 36px !important;
+  height: 36px !important;
+}
+
+.maxnote-app .toolbar-button:hover {
+  background: #f8f9fa !important;
+}
+
+.maxnote-app .toolbar-button .material-icons {
+  font-size: 20px !important;
+  color: #5f6368 !important;
+}
+
+.maxnote-app .toolbar-status {
+  font-size: 12px !important;
+  color: #5f6368 !important;
+  font-family: 'Roboto', sans-serif !important;
+  padding: 0 8px !important;
+}
+
+.maxnote-app .saving-indicator {
+  color: #ea8600 !important;
+}
+
+.maxnote-app .saved-indicator {
+  color: #1e8e3e !important;
+}
+
+/* Textarea - Main Editor */
+.maxnote-app .note-editor-textarea {
+  flex: 1 !important;
+  padding: 24px 32px !important;
+  border: none !important;
+  outline: none !important;
+  font-family: 'Roboto', sans-serif !important;
+  font-size: 15px !important;
+  line-height: 1.6 !important;
+  color: #202124 !important;
+  resize: none !important;
+  background: white !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.maxnote-app .note-editor-textarea::placeholder {
+  color: #9aa0a6 !important;
+}
+
+/* No Note Selected State */
+.maxnote-app .no-note-selected {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 100% !important;
+  color: #5f6368 !important;
+  font-family: 'Roboto', sans-serif !important;
+}
+
+.maxnote-app .no-note-selected h2 {
+  font-size: 24px !important;
+  font-weight: 400 !important;
+  margin-bottom: 8px !important;
+  color: #202124 !important;
+}
+
+.maxnote-app .no-note-selected p {
+  font-size: 14px !important;
+  color: #5f6368 !important;
+}
+
+/* Scrollbar Styling */
+.maxnote-app .notes-list::-webkit-scrollbar,
+.maxnote-app .note-editor-textarea::-webkit-scrollbar {
+  width: 8px !important;
+}
+
+.maxnote-app .notes-list::-webkit-scrollbar-track,
+.maxnote-app .note-editor-textarea::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.maxnote-app .notes-list::-webkit-scrollbar-thumb,
+.maxnote-app .note-editor-textarea::-webkit-scrollbar-thumb {
+  background: #dadce0 !important;
+  border-radius: 4px !important;
+}
+
+.maxnote-app .notes-list::-webkit-scrollbar-thumb:hover,
+.maxnote-app .note-editor-textarea::-webkit-scrollbar-thumb:hover {
+  background: #bdc1c6 !important;
+}
+
+/* Header adjustments */
+.note-header-container {
+  background: white !important;
+  border-bottom: 1px solid #e8eaed !important;
+}
+
+/* Logo */
+.logo-wrapper {
+  margin-left: 8px !important;
+}
+
+.ample-svg-logo {
+  width: 32px !important;
+  height: 32px !important;
+}
+
+.logo-icon {
+  fill: #1a73e8 !important;
+}
+
+/* Remove pane-with-sidebar margin that's breaking layout */
+.pane-with-sidebar {
+  margin-right: 0 !important;
+}
+
+/* Ensure no conflicts with existing sidebar classes */
+.pane-with-sidebar .sidebar {
+  display: none !important;
+}

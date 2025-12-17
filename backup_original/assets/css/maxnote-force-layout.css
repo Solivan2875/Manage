@@ -1,0 +1,101 @@
+/**
+ * MaxNote Force Layout - Nuclear Option
+ * Uses the most specific selectors possible to force horizontal layout
+ */
+
+/* Step 1: Reset everything in the container */
+.note-editor-app-container [data-react-class="NoteEditorApp"],
+.note-editor-app-container [data-react-class="NoteEditorApp"] > div,
+.note-editor-app-container .maxnote-full-app {
+  all: unset !important;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  height: 100% !important;
+  width: 100% !important;
+  background: #fafafa !important;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+
+/* Step 2: Force direct children to be inline */
+.maxnote-full-app > div:nth-child(1),
+.maxnote-full-app > div:nth-child(2),
+.maxnote-full-app > div:nth-child(3),
+.maxnote-full-app > .left-sidebar,
+.maxnote-full-app > .notes-list-panel,
+.maxnote-full-app > .note-editor-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  align-self: stretch !important;
+  height: 100% !important;
+  flex-shrink: 0 !important;
+}
+
+/* Step 3: Set specific widths */
+.maxnote-full-app > div:nth-child(1),
+.maxnote-full-app > .left-sidebar {
+  width: 220px !important;
+  min-width: 220px !important;
+  max-width: 220px !important;
+  flex: 0 0 220px !important;
+  background: linear-gradient(180deg, #2d8b82 0%, #267d75 100%) !important;
+  color: white !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+.maxnote-full-app > div:nth-child(2),
+.maxnote-full-app > .notes-list-panel {
+  width: 320px !important;
+  min-width: 320px !important;
+  max-width: 320px !important;
+  flex: 0 0 320px !important;
+  background: white !important;
+  border-right: 1px solid #e0e0e0 !important;
+  overflow: hidden !important;
+}
+
+.maxnote-full-app > div:nth-child(3),
+.maxnote-full-app > .note-editor-panel {
+  flex: 1 1 auto !important;
+  min-width: 400px !important;
+  width: auto !important;
+  background: white !important;
+  overflow: hidden !important;
+}
+
+/* Step 4: Remove any floats or positioning that might break layout */
+.maxnote-full-app * {
+  float: none !important;
+  position: relative !important;
+}
+
+/* Step 5: Ensure flexbox is maintained throughout */
+.left-sidebar,
+.notes-list-panel,
+.note-editor-panel,
+.maxnote-full-app > div {
+  box-sizing: border-box !important;
+}
+
+/* Debug: Add visible borders to see layout */
+.maxnote-full-app {
+  outline: 2px solid red !important;
+}
+
+.maxnote-full-app > div:nth-child(1),
+.maxnote-full-app > .left-sidebar {
+  outline: 2px solid blue !important;
+}
+
+.maxnote-full-app > div:nth-child(2),
+.maxnote-full-app > .notes-list-panel {
+  outline: 2px solid green !important;
+}
+
+.maxnote-full-app > div:nth-child(3),
+.maxnote-full-app > .note-editor-panel {
+  outline: 2px solid orange !important;
+}

@@ -1,0 +1,857 @@
+/**
+ * MaxNote Complete 3-Panel Layout
+ * Replicating Amplenote design with MaxNote identity
+ */
+
+/* Global Overrides */
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  height: 100vh !important;
+  width: 100vw !important;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+
+/* MaxNote Logo Styling */
+.logo-icon {
+  fill: #2d8b82 !important;
+}
+
+.ample-svg-logo {
+  width: 36px !important;
+  height: 36px !important;
+}
+
+.logo-wrapper {
+  display: flex !important;
+  align-items: center !important;
+  margin-left: 12px !important;
+}
+
+.note-editor-app-container {
+  padding-top: 64px !important;
+  height: 100vh !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+}
+
+/* Remove conflicting margins */
+.pane-with-sidebar {
+  margin-right: 0 !important;
+  height: calc(100vh - 64px) !important;
+}
+
+/* Hide old sidebar */
+.pane-with-sidebar .sidebar {
+  display: none !important;
+}
+
+/* Fix header positioning */
+.note-header-container {
+  z-index: 100 !important;
+}
+
+/* ===================================
+   MAIN 3-PANEL LAYOUT
+   =================================== */
+
+/* React container must take full space */
+[data-react-class="NoteEditorApp"] {
+  height: 100% !important;
+  width: 100% !important;
+  display: block !important;
+}
+
+.maxnote-full-app {
+  display: flex !important;
+  flex-direction: row !important;
+  height: 100% !important;
+  width: 100% !important;
+  overflow: hidden !important;
+  background: #fafafa !important;
+  position: relative !important;
+}
+
+/* ===================================
+   LEFT SIDEBAR (Green/Turquoise)
+   =================================== */
+
+.left-sidebar {
+  width: 220px !important;
+  min-width: 220px !important;
+  max-width: 220px !important;
+  background: linear-gradient(180deg, #2d8b82 0%, #267d75 100%) !important;
+  color: white !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  flex-shrink: 0 !important;
+  height: 100% !important;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.1) !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+/* User Profile Section */
+.user-profile {
+  display: flex !important;
+  align-items: center !important;
+  padding: 16px 20px !important;
+  border-bottom: 1px solid rgba(255,255,255,0.15) !important;
+  cursor: pointer !important;
+  transition: background 0.2s ease !important;
+}
+
+.user-profile:hover {
+  background: rgba(255,255,255,0.1) !important;
+}
+
+.user-avatar {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  background: rgba(255,255,255,0.2) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-right: 12px !important;
+}
+
+.user-avatar .material-icons {
+  font-size: 24px !important;
+  color: white !important;
+}
+
+.user-name {
+  flex: 1 !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: white !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.dropdown-icon {
+  font-size: 20px !important;
+  color: rgba(255,255,255,0.7) !important;
+}
+
+/* Navigation Menu */
+.nav-menu {
+  padding: 12px 0 !important;
+  border-bottom: 1px solid rgba(255,255,255,0.15) !important;
+}
+
+.nav-item {
+  display: flex !important;
+  align-items: center !important;
+  padding: 12px 20px !important;
+  cursor: pointer !important;
+  transition: background 0.2s ease !important;
+  color: rgba(255,255,255,0.85) !important;
+}
+
+.nav-item:hover {
+  background: rgba(255,255,255,0.1) !important;
+}
+
+.nav-item.active {
+  background: rgba(255,255,255,0.2) !important;
+  color: white !important;
+  border-left: 4px solid white !important;
+  padding-left: 16px !important;
+}
+
+.nav-item .material-icons {
+  font-size: 20px !important;
+  margin-right: 16px !important;
+  color: inherit !important;
+}
+
+.nav-item span {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+}
+
+/* Shortcuts Section */
+.shortcuts-section,
+.tags-section {
+  padding: 16px 20px !important;
+  border-bottom: 1px solid rgba(255,255,255,0.15) !important;
+}
+
+.section-title {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  letter-spacing: 1px !important;
+  text-transform: uppercase !important;
+  color: rgba(255,255,255,0.6) !important;
+  margin-bottom: 12px !important;
+}
+
+.section-title .material-icons {
+  font-size: 16px !important;
+  color: rgba(255,255,255,0.6) !important;
+  cursor: pointer !important;
+  transition: color 0.2s ease !important;
+}
+
+.section-title .material-icons:hover {
+  color: white !important;
+}
+
+.shortcut-item {
+  display: flex !important;
+  align-items: center !important;
+  padding: 8px 0 !important;
+  cursor: pointer !important;
+  color: rgba(255,255,255,0.85) !important;
+  transition: color 0.2s ease !important;
+}
+
+.shortcut-item:hover {
+  color: white !important;
+}
+
+.star-icon {
+  font-size: 18px !important;
+  margin-right: 12px !important;
+  color: #ffd700 !important;
+}
+
+.shortcut-item span {
+  font-size: 13px !important;
+}
+
+/* Bottom Icons */
+.bottom-icons {
+  margin-top: auto !important;
+  display: flex !important;
+  justify-content: space-around !important;
+  padding: 20px 10px !important;
+  border-top: 1px solid rgba(255,255,255,0.15) !important;
+}
+
+.bottom-icons .material-icons {
+  font-size: 22px !important;
+  color: rgba(255,255,255,0.7) !important;
+  cursor: pointer !important;
+  transition: color 0.2s ease !important;
+}
+
+.bottom-icons .material-icons:hover {
+  color: white !important;
+}
+
+/* Scrollbar for Left Sidebar */
+.left-sidebar::-webkit-scrollbar {
+  width: 6px !important;
+}
+
+.left-sidebar::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.1) !important;
+}
+
+.left-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.3) !important;
+  border-radius: 3px !important;
+}
+
+.left-sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.5) !important;
+}
+
+/* ===================================
+   MIDDLE PANEL (Notes List)
+   =================================== */
+
+.notes-list-panel {
+  width: 320px !important;
+  min-width: 320px !important;
+  max-width: 320px !important;
+  background: white !important;
+  border-right: 1px solid #e0e0e0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+  height: 100% !important;
+  position: relative !important;
+  z-index: 9 !important;
+}
+
+/* Search Bar */
+.search-bar-container {
+  display: flex !important;
+  align-items: center !important;
+  padding: 12px 16px !important;
+  background: white !important;
+  border-bottom: 1px solid #e8eaed !important;
+  flex-shrink: 0 !important;
+}
+
+.search-icon {
+  font-size: 20px !important;
+  color: #5f6368 !important;
+  margin-right: 8px !important;
+}
+
+.search-input {
+  flex: 1 !important;
+  border: none !important;
+  outline: none !important;
+  font-size: 14px !important;
+  font-family: 'Roboto', sans-serif !important;
+  color: #202124 !important;
+  background: transparent !important;
+}
+
+.search-input::placeholder {
+  color: #9aa0a6 !important;
+}
+
+.search-bar-container .material-icons {
+  font-size: 20px !important;
+  color: #5f6368 !important;
+  margin-left: 8px !important;
+  cursor: pointer !important;
+  transition: color 0.2s ease !important;
+}
+
+.search-bar-container .material-icons:hover {
+  color: #202124 !important;
+}
+
+/* Notes Header */
+.notes-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 16px !important;
+  background: white !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+  flex-shrink: 0 !important;
+}
+
+.notes-count {
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.8px !important;
+  color: #5f6368 !important;
+}
+
+.new-note-btn {
+  display: flex !important;
+  align-items: center !important;
+  padding: 6px 12px !important;
+  background: #1a73e8 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  transition: background 0.2s ease !important;
+}
+
+.new-note-btn:hover {
+  background: #1557b0 !important;
+}
+
+.new-note-btn .material-icons {
+  font-size: 18px !important;
+  margin-right: 4px !important;
+}
+
+/* Sort Options */
+.sort-options {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 12px 16px !important;
+  background: #f8f9fa !important;
+  font-size: 12px !important;
+  color: #5f6368 !important;
+  cursor: pointer !important;
+  flex-shrink: 0 !important;
+}
+
+.sort-options .material-icons {
+  font-size: 18px !important;
+}
+
+/* Notes List Items */
+.notes-items {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding: 8px !important;
+}
+
+.note-list-item {
+  display: flex !important;
+  padding: 12px !important;
+  margin-bottom: 4px !important;
+  background: white !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  border: 1px solid transparent !important;
+}
+
+.note-list-item:hover {
+  background: #f8f9fa !important;
+  border-color: #e8eaed !important;
+}
+
+.note-list-item.selected {
+  background: #e8f0fe !important;
+  border-color: #d2e3fc !important;
+}
+
+.note-item-icon {
+  margin-right: 12px !important;
+  flex-shrink: 0 !important;
+}
+
+.note-item-icon .material-icons {
+  font-size: 20px !important;
+  color: #5f6368 !important;
+}
+
+.note-item-content {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.note-item-title {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: #202124 !important;
+  margin-bottom: 4px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.note-item-preview {
+  font-size: 13px !important;
+  color: #5f6368 !important;
+  margin-bottom: 6px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.note-item-tags {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 4px !important;
+  margin-bottom: 4px !important;
+}
+
+.tag-badge {
+  padding: 2px 8px !important;
+  background: #e8f0fe !important;
+  color: #1967d2 !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  border-radius: 12px !important;
+}
+
+.note-item-time {
+  font-size: 11px !important;
+  color: #9aa0a6 !important;
+}
+
+.empty-state {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 100% !important;
+  color: #9aa0a6 !important;
+  font-size: 14px !important;
+  font-style: italic !important;
+}
+
+/* Scrollbar for Notes List */
+.notes-items::-webkit-scrollbar {
+  width: 8px !important;
+}
+
+.notes-items::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.notes-items::-webkit-scrollbar-thumb {
+  background: #dadce0 !important;
+  border-radius: 4px !important;
+}
+
+.notes-items::-webkit-scrollbar-thumb:hover {
+  background: #bdc1c6 !important;
+}
+
+/* ===================================
+   RIGHT PANEL (Note Editor)
+   =================================== */
+
+.note-editor-panel {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: white !important;
+  overflow: hidden !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  position: relative !important;
+  z-index: 8 !important;
+}
+
+/* Editor Empty State */
+.editor-empty-state {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 100% !important;
+  padding: 40px !important;
+  text-align: center !important;
+  color: #5f6368 !important;
+}
+
+.empty-illustration {
+  margin-bottom: 24px !important;
+}
+
+.empty-illustration img {
+  width: 200px !important;
+  height: 200px !important;
+  opacity: 0.7 !important;
+}
+
+.editor-empty-state h2 {
+  font-size: 24px !important;
+  font-weight: 400 !important;
+  color: #202124 !important;
+  margin-bottom: 16px !important;
+}
+
+.editor-empty-state p {
+  font-size: 16px !important;
+  color: #5f6368 !important;
+  margin-bottom: 12px !important;
+}
+
+.editor-empty-state ol {
+  text-align: left !important;
+  font-size: 15px !important;
+  color: #5f6368 !important;
+  line-height: 1.8 !important;
+  margin-bottom: 24px !important;
+  max-width: 400px !important;
+}
+
+.start-note-btn {
+  display: flex !important;
+  align-items: center !important;
+  padding: 10px 20px !important;
+  background: #1a73e8 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  transition: background 0.2s ease !important;
+}
+
+.start-note-btn:hover {
+  background: #1557b0 !important;
+}
+
+.start-note-btn .material-icons {
+  font-size: 20px !important;
+  margin-right: 8px !important;
+}
+
+/* Editor Header */
+.editor-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 20px 32px !important;
+  background: white !important;
+  border-bottom: 1px solid #e8eaed !important;
+  flex-shrink: 0 !important;
+}
+
+.editor-title {
+  flex: 1 !important;
+  font-size: 20px !important;
+  font-weight: 400 !important;
+  color: #202124 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.editor-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.editor-btn {
+  width: 36px !important;
+  height: 36px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  transition: background 0.2s ease !important;
+  color: #5f6368 !important;
+}
+
+.editor-btn:hover {
+  background: #f8f9fa !important;
+}
+
+.editor-btn .material-icons {
+  font-size: 20px !important;
+}
+
+.saving-text {
+  font-size: 12px !important;
+  color: #ea8600 !important;
+  margin-right: 8px !important;
+}
+
+.publish-btn {
+  padding: 8px 16px !important;
+  background: #1a73e8 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  font-size: 13px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  transition: background 0.2s ease !important;
+}
+
+.publish-btn:hover {
+  background: #1557b0 !important;
+}
+
+.publish-btn .material-icons {
+  font-size: 18px !important;
+}
+
+/* Editor Toolbar */
+.editor-toolbar {
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+  padding: 8px 32px !important;
+  background: white !important;
+  border-bottom: 1px solid #e8eaed !important;
+  overflow-x: auto !important;
+  flex-shrink: 0 !important;
+  flex-wrap: wrap !important;
+}
+
+.toolbar-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 4px 0 !important;
+}
+
+.toolbar-btn {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: transparent !important;
+  border: 1px solid #dadce0 !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  color: #5f6368 !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+}
+
+.toolbar-btn:hover {
+  background: #f8f9fa !important;
+  border-color: #bdc1c6 !important;
+}
+
+.toolbar-btn .material-icons {
+  font-size: 18px !important;
+}
+
+.toolbar-btn span {
+  font-size: 13px !important;
+}
+
+.publish-small {
+  background: #1a73e8 !important;
+  color: white !important;
+  border-color: #1a73e8 !important;
+}
+
+.publish-small:hover {
+  background: #1557b0 !important;
+  border-color: #1557b0 !important;
+}
+
+/* Scrollbar for Toolbar */
+.editor-toolbar::-webkit-scrollbar {
+  height: 6px !important;
+}
+
+.editor-toolbar::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.editor-toolbar::-webkit-scrollbar-thumb {
+  background: #dadce0 !important;
+  border-radius: 3px !important;
+}
+
+.editor-toolbar::-webkit-scrollbar-thumb:hover {
+  background: #bdc1c6 !important;
+}
+
+/* Editor Textarea */
+.editor-textarea {
+  flex: 1 !important;
+  padding: 24px 32px !important;
+  border: none !important;
+  outline: none !important;
+  font-family: 'Roboto', sans-serif !important;
+  font-size: 15px !important;
+  line-height: 1.6 !important;
+  color: #202124 !important;
+  resize: none !important;
+  background: white !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.editor-textarea::placeholder {
+  color: #9aa0a6 !important;
+  font-style: italic !important;
+}
+
+/* Scrollbar for Editor */
+.editor-textarea::-webkit-scrollbar {
+  width: 8px !important;
+}
+
+.editor-textarea::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.editor-textarea::-webkit-scrollbar-thumb {
+  background: #dadce0 !important;
+  border-radius: 4px !important;
+}
+
+.editor-textarea::-webkit-scrollbar-thumb:hover {
+  background: #bdc1c6 !important;
+}
+
+/* ===================================
+   RESPONSIVE DESIGN
+   =================================== */
+
+@media screen and (max-width: 1024px) {
+  .left-sidebar {
+    width: 60px !important;
+    min-width: 60px !important;
+    max-width: 60px !important;
+  }
+
+  .user-profile .user-name,
+  .dropdown-icon,
+  .nav-item span,
+  .section-title,
+  .shortcut-item span {
+    display: none !important;
+  }
+
+  .nav-item {
+    justify-content: center !important;
+    padding: 12px !important;
+  }
+
+  .nav-item .material-icons {
+    margin-right: 0 !important;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .notes-list-panel {
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    border: none !important;
+    overflow: hidden !important;
+  }
+
+  .editor-toolbar {
+    gap: 8px !important;
+    padding: 8px 16px !important;
+  }
+
+  .toolbar-group {
+    gap: 2px !important;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .left-sidebar {
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .editor-header {
+    padding: 16px !important;
+  }
+
+  .editor-title {
+    font-size: 18px !important;
+  }
+
+  .editor-textarea {
+    padding: 16px !important;
+    font-size: 14px !important;
+  }
+}

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html data-config='{"release":"7d890fd6675aba473cb107856df51f2d8e574842","user":{"id":239731,"uuid":"82fe5f96-d9e4-11f0-a2e9-35aec2b8a3c2"}}'>
+<head>
+<meta charset='utf-8'>
+<link href="./assets" rel="preconnect"></link><link rel="preload" href="./assets/fonts/materialicons-latin-400normal-dafdbac44033fa5944dd6dfc4faf59c0fdee74e776d27b840c9738846933d976.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0' name='viewport'>
+<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+<meta content='dark light' name='supported-color-schemes'>
+<title>MaxNote - Your Personal Note-Taking App</title>
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="G+6OCjJJWb+MjHH8dq+BQXxfpniBpse1g8XkJHmQwMwmkaQroUAj/XMECk//7YPVXPUGSoZuGPBBTN6vP4/f/Q==" />
+<link crossOrigin='use-credentials' href='./config/manifest.json' rel='manifest'>
+<link rel="stylesheet" media="all" crossorigin="anonymous" href="./assets/css/application.css" />
+<link rel="stylesheet" media="all" crossorigin="anonymous" href="./assets/css/notes.css" />
+<link rel="stylesheet" media="all" crossorigin="anonymous" href="./assets/css/note_editor_app.css" />
+<link rel="stylesheet" media="all" crossorigin="anonymous" href="./assets/css/maxnote-full.css" />
+<link rel="stylesheet" media="all" crossorigin="anonymous" href="./assets/css/maxnote-override.css" />
+<link rel="stylesheet" media="all" crossorigin="anonymous" href="./assets/css/maxnote-force-layout.css" />
+<script src="./assets/js/application.js" crossorigin="anonymous"></script>
+
+<link rel="apple-touch-icon" type="image/png" href="./assets/icons/apple-touch-icon-57x57.png" sizes="57x57" />
+<link rel="apple-touch-icon" type="image/png" href="./assets/icons/apple-touch-icon-60x60.png" sizes="60x60" />
+<link rel="apple-touch-icon" type="image/png" href="./assets/icons/apple-touch-icon-72x72.png" sizes="72x72" />
+<link rel="apple-touch-icon" type="image/png" href="./assets/icons/apple-touch-icon-76x76.png" sizes="76x76" />
+<link rel="apple-touch-icon" type="image/png" href="./assets/icons/apple-touch-icon-114x114.png" sizes="114x114" />
+<link rel="apple-touch-icon" type="image/png" href="./assets/icons/apple-touch-icon-120x120.png" sizes="120x120" />
+<link rel="apple-touch-icon" type="image/png" href="./assets/icons/apple-touch-icon-144x144.png" sizes="144x144" />
+<link rel="apple-touch-icon" type="image/png" href="./assets/icons/apple-touch-icon-152x152.png" sizes="152x152" />
+<link rel="apple-touch-icon" type="image/png" href="./assets/icons/apple-touch-icon-180x180.png" sizes="180x180" />
+<link rel="icon" type="image/png" href="./assets/icons/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/png" href="./assets/icons/favicon-32x32.png" sizes="32x32" />
+<link rel="icon" type="image/png" href="./assets/icons/favicon-16x16.png" sizes="16x16" />
+
+</head>
+<body class='themeable theme-minimal'>
+<header class='mdc-top-app-bar mdc-top-app-bar--fixed mdc-elevation--z1 note-header-container'>
+<div id='header-banner-container'></div>
+
+<div class='mdc-top-app-bar__row'>
+<section class='mdc-top-app-bar__section mdc-top-app-bar__section--align-start primary-action-container'>
+<div class='material-icons mdc-top-app-bar__navigation-icon'>menu</div>
+<div class='logo-wrapper'>
+<a href='./notes?default=true' tabindex='-1'>
+<svg alt='MaxNote' class='ample-svg-logo' viewBox='0 0 56 56' xmlns='http://www.w3.org/2000/svg'>
+<path class='logo-icon' d='M52.187 35.694 32.654 1.862C31.98.695 30.83 0 29.58 0c-1.249 0-2.399.696-3.072 1.863l-6.784 11.75c-.027.04-.054.08-.078.121L5.614 37.964c-3.32 5.732-1.353 13.1 4.378 16.421A11.957 11.957 0 0 0 15.994 56c4.15 0 8.192-2.147 10.418-5.99l4.375-7.555c.037-.065.07-.132.102-.198l4.433-7.654a7.187 7.187 0 0 0 .73-5.492 7.194 7.194 0 0 0-3.367-4.399 7.245 7.245 0 0 0-9.888 2.637L13.91 42.691a2.801 2.801 0 1 0 4.849 2.805l8.885-15.344a1.636 1.636 0 0 1 2.83 1.64L23.72 43.458c-.038.063-.07.13-.101.195L21.565 47.2a6.421 6.421 0 0 1-8.766 2.334 6.419 6.419 0 0 1-2.336-8.764l4.184-7.228c.084-.105.164-.215.234-.335l14.7-25.464 15.974 27.67H38.02a2.801 2.801 0 0 0 0 5.602h11.095c1.347 0 2.524-.646 3.148-1.73.627-1.084.597-2.425-.076-3.592' style='fill: #2d8b82'></path>
+</svg>
+
+</a>
+</div>
+<div id='header-search-bar-container'></div>
+<div id='header-navigation-history-button-container'></div>
+
+</section>
+<section class='mdc-top-app-bar__section mdc-top-app-bar__section--align-end'>
+<div id='header-buttons-container'></div>
+</section>
+</div>
+</header>
+
+<div class='note-editor-app-container'>
+<div data-react-class="NoteEditorApp" data-react-props="{"accountKeys":{"hasSecureKey":false,"secureKeySalt":"AURR64moS/6xn3ApJK7Chw/9gfXr9JikFDoU+urtIlQ=","standardKey":"jXspumF3P2YTaeMGEDEvnVL8QmnAk3Zv47Hw/jT+veQ="},"accountStatus":"active_trial","accountStatusBanner":{"accountStatus":"active_trial","daysToSnooze":7,"nagExiled":null,"nagExilePath":null,"trialEndsAt":1767033193},"accountUUID":"82fe5f96-d9e4-11f0-a2e9-35aec2b8a3c2","api":{"accessToken":"56879104d141a83834bd71f2f2237016f083fcd8303fdda5997d4b4c09e16668","accessTokenExpiresAt":1765845662,"apiEndpoint":"https://api.amplenote.com/v4"},"flags":{"mergeReports":false,"reportDiagnostics":false},"person":{"avatar":"https://lh3.googleusercontent.com/a/ACg8ocL7eNF9Jz66PE7FsOFz3p3-S80FzE85yBShlp51yuzUhYO3SPey4w=s192-c","email":"solivanguedes@gmail.com","name":"Solivan Xavier"},"placeholder":"Simply a matter of work\n","pluginSandboxEndpoint":"https://plugins.amplenote.com/sandbox?version=654bf29a916aeb3b79dae5f0d29a587c7e8ed4740","pluginEmbedEndpoint":"https://plugins.amplenote.com/embed?version=4ba1ec5aa01b457cb6dbbf40fd8c78066f60e3178","publicProfilePath":"/user_profiles/new","realtimeEndpoint":"https://realtime.amplenote.com/notes","refreshEndpoint":"https://www.amplenote.com/login/refresh","release":"7d890fd6675aba473cb107856df51f2d8e574842","version":"45590231d931e0863aef196a03329a525b7ccbce"}"></div>
+</div>
+
+<script src="./assets/js/vendor/react.production.min.js"></script>
+<script src="./assets/js/vendor/react-dom.production.min.js"></script><script src="./assets/js/runtime.js"></script>
+<script src="./assets/js/note_editor_app.js"></script>
+</body>
+</html>
