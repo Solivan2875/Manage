@@ -34,8 +34,8 @@ export const NoteEditor = () => {
     const mockNotes: Note[] = [
         {
             id: '1',
-            title: 'MaxNote Features Roadmap',
-            content: 'Planning the future of MaxNote with advanced AI integration, collaborative features, and cross-platform sync...',
+            title: 'Planejamento de Recursos do MaxNote',
+            content: 'Planejando o futuro do MaxNote com integração avançada de IA, recursos colaborativos e sincronização multiplataforma...',
             tags: ['planning', 'roadmap', 'development'],
             createdAt: new Date('2025-12-15'),
             updatedAt: new Date('2025-12-16'),
@@ -43,8 +43,8 @@ export const NoteEditor = () => {
         },
         {
             id: '2',
-            title: 'Meeting Notes - Q1 Planning',
-            content: 'Discussed quarterly goals, team expansion, and new product initiatives. Key decisions made on budget allocation...',
+            title: 'Notas da Reunião - Planejamento do 1º Trimestre',
+            content: 'Discutidas metas trimestrais, expansão da equipe e novas iniciativas de produtos. Decisões importantes tomadas sobre alocação de orçamento...',
             tags: ['meetings', 'planning', 'business'],
             createdAt: new Date('2025-12-14'),
             updatedAt: new Date('2025-12-15'),
@@ -52,30 +52,30 @@ export const NoteEditor = () => {
         },
         {
             id: '3',
-            title: 'Interactive Table Example',
+            title: 'Exemplo de Tabela Interativa',
             content: `<table class="note-table">
   <thead>
     <tr>
-      <th>Header 1</th>
-      <th>Header 2</th>
-      <th>Header 3</th>
+      <th>Cabeçalho 1</th>
+      <th>Cabeçalho 2</th>
+      <th>Cabeçalho 3</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td>Cell 1-1</td>
-      <td>Cell 1-2</td>
-      <td>Cell 1-3</td>
+      <td>Célula 1-1</td>
+      <td>Célula 1-2</td>
+      <td>Célula 1-3</td>
     </tr>
     <tr>
-      <td>Cell 2-1</td>
-      <td>Cell 2-2</td>
-      <td>Cell 2-3</td>
+      <td>Célula 2-1</td>
+      <td>Célula 2-2</td>
+      <td>Célula 2-3</td>
     </tr>
     <tr>
-      <td>Cell 3-1</td>
-      <td>Cell 3-2</td>
-      <td>Cell 3-3</td>
+      <td>Célula 3-1</td>
+      <td>Célula 3-2</td>
+      <td>Célula 3-3</td>
     </tr>
   </tbody>
 </table>`,
@@ -86,28 +86,28 @@ export const NoteEditor = () => {
         },
         {
             id: '4',
-            title: 'Embed Examples Note',
-            content: `# Embed Examples
+            title: 'Nota de Exemplos de Incorporação',
+            content: `# Exemplos de Incorporação
 
-This note contains examples of embedded content:
+Esta nota contém exemplos de conteúdo incorporado:
 
-## YouTube Video
-Here's an example of a YouTube video embed:
+## Vídeo do YouTube
+Aqui está um exemplo de incorporação de vídeo do YouTube:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="rounded-lg shadow-md"></iframe>
 
-## PDF Document
-Here's an example of a Google Drive PDF embed:
+## Documento PDF
+Aqui está um exemplo de incorporação de PDF do Google Drive:
 
 <iframe src="https://drive.google.com/file/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/preview" width="100%" height="600" class="border border-gray-300 dark:border-gray-600 rounded-lg shadow-md"></iframe>
 
-## Mixed Content
-You can mix embeds with regular text and other markdown elements.
+## Conteúdo Misto
+Você pode misturar incorporações com texto regular e outros elementos markdown.
 
-* List item 1
-* List item 2
+* Item de lista 1
+* Item de lista 2
 
-**Bold text** and *italic text* can be used alongside embeds.`,
+**Texto em negrito** e *texto em itálico* podem ser usados junto com incorporações.`,
             tags: ['embeds', 'examples', 'youtube', 'pdf'],
             createdAt: new Date('2025-12-16'),
             updatedAt: new Date('2025-12-16'),
@@ -168,14 +168,14 @@ You can mix embeds with regular text and other markdown elements.
             if (editorRef.current && editorRef.current.contains(target)) {
                 // Check if clicking on editor-related elements (stay in edit mode)
                 const isEditorElement = target.tagName === 'TEXTAREA' ||
-                                       target.tagName === 'BUTTON' ||
-                                       target.tagName === 'INPUT' ||
-                                       target.closest('textarea') ||
-                                       target.closest('button') ||
-                                       target.closest('input') ||
-                                       target.closest('.editable-table-cell') ||
-                                       target.closest('.editable-table-controls') ||
-                                       target.closest('.embed-placeholder');
+                    target.tagName === 'BUTTON' ||
+                    target.tagName === 'INPUT' ||
+                    target.closest('textarea') ||
+                    target.closest('button') ||
+                    target.closest('input') ||
+                    target.closest('.editable-table-cell') ||
+                    target.closest('.editable-table-controls') ||
+                    target.closest('.embed-placeholder');
 
                 if (isEditorElement) {
                     if (isPreviewMode) {
@@ -204,7 +204,7 @@ You can mix embeds with regular text and other markdown elements.
         setTimeout(() => {
             const updatedNote: Note = {
                 id: note?.id || Date.now().toString(),
-                title: title.trim() || 'Untitled Note',
+                title: title.trim() || 'Nota Sem Título',
                 content: content.trim(),
                 tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag),
                 createdAt: note?.createdAt || new Date(),
@@ -338,7 +338,7 @@ You can mix embeds with regular text and other markdown elements.
                             setSaveStatus('unsaved');
                         }}
                         className="text-xl font-semibold bg-transparent border-none outline-none flex-1 min-w-[200px]"
-                        placeholder="Note title"
+                        placeholder="Título da nota"
                     />
                 </div>
 
@@ -346,35 +346,35 @@ You can mix embeds with regular text and other markdown elements.
                     {saveStatus === 'saved' && (
                         <span className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
                             <Check className="w-3 h-3" />
-                            Saved
+                            Salvo
                         </span>
                     )}
                     {saveStatus === 'saving' && (
-                        <span className="text-xs text-blue-600 dark:text-blue-400">Saving...</span>
+                        <span className="text-xs text-blue-600 dark:text-blue-400">Salvando...</span>
                     )}
                     {saveStatus === 'unsaved' && (
-                        <span className="text-xs text-gray-500 dark:text-gray-400">Unsaved</span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">Não salvo</span>
                     )}
 
                     <div className="flex items-center border-l border-gray-200 dark:border-gray-700 pl-2 ml-2">
                         <button
                             onClick={() => setIsPreviewMode(!isPreviewMode)}
                             className={`p-2 rounded-md transition-colors ${isPreviewMode ? 'bg-teal-50 text-teal-700 dark:bg-teal-900/20 dark:text-teal-400' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}
-                            title="Toggle preview"
+                            title="Alternar visualização"
                         >
                             <Eye className="w-5 h-5" />
                         </button>
                         <button
                             onClick={() => setShowSettings(!showSettings)}
                             className={`p-2 rounded-md transition-colors ${showSettings ? 'bg-teal-50 text-teal-700 dark:bg-teal-900/20 dark:text-teal-400' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}
-                            title="Settings"
+                            title="Configurações"
                         >
                             <Settings className="w-5 h-5" />
                         </button>
                         <button
                             onClick={handleSave}
                             className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
-                            title="Save"
+                            title="Salvar"
                         >
                             <Save className="w-5 h-5" />
                         </button>
@@ -394,7 +394,7 @@ You can mix embeds with regular text and other markdown elements.
                                 setTags(e.target.value);
                                 setSaveStatus('unsaved');
                             }}
-                            placeholder="Add tags (comma separated)"
+                            placeholder="Adicionar tags (separadas por vírgula)"
                             className="flex-1 px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
                         />
                     </div>
@@ -403,7 +403,7 @@ You can mix embeds with regular text and other markdown elements.
                             <div className="flex items-center gap-2">
                                 <Calendar className="w-4 h-4 text-gray-500" />
                                 <span className="text-sm text-gray-600 dark:text-gray-400">
-                                    {note ? `Created ${note.createdAt.toLocaleDateString()}` : 'New note'}
+                                    {note ? `Criado em ${note.createdAt.toLocaleDateString('pt-BR')}` : 'Nova nota'}
                                 </span>
                             </div>
                             <div className="flex items-center gap-2">
@@ -463,7 +463,7 @@ You can mix embeds with regular text and other markdown elements.
                                     setContent(value);
                                     setSaveStatus('unsaved');
                                 }}
-                                placeholder="Start writing your note..."
+                                placeholder="Comece a escrever sua nota..."
                             />
                         </div>
                     )}
@@ -475,7 +475,7 @@ You can mix embeds with regular text and other markdown elements.
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
                     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
                         <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg font-semibold">Insert Link</h3>
+                            <h3 className="text-lg font-semibold">Inserir Link</h3>
                             <button
                                 onClick={() => setShowLinkDialog(false)}
                                 className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
@@ -485,13 +485,13 @@ You can mix embeds with regular text and other markdown elements.
                         </div>
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium mb-1">Link Text</label>
+                                <label className="block text-sm font-medium mb-1">Texto do link</label>
                                 <input
                                     type="text"
                                     value={linkText}
                                     onChange={(e) => setLinkText(e.target.value)}
                                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                                    placeholder="Link text"
+                                    placeholder="Texto do link"
                                 />
                             </div>
                             <div>
@@ -509,13 +509,13 @@ You can mix embeds with regular text and other markdown elements.
                                     onClick={() => setShowLinkDialog(false)}
                                     className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
                                 >
-                                    Cancel
+                                    Cancelar
                                 </button>
                                 <button
                                     onClick={handleInsertLink}
                                     className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-md transition-colors"
                                 >
-                                    Insert
+                                    Inserir
                                 </button>
                             </div>
                         </div>

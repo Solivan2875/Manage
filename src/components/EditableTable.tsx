@@ -470,7 +470,7 @@ export const EditableTable = ({ html, onChange }: EditableTableProps) => {
     }, [editingCell, tempValue]);
 
     if (tableData.length === 0) {
-        return <div>Invalid table format</div>;
+        return <div>Formato de tabela inválido</div>;
     }
 
     return (
@@ -479,30 +479,30 @@ export const EditableTable = ({ html, onChange }: EditableTableProps) => {
                 <button
                     onClick={() => addRow('top')}
                     className="editable-table-button"
-                    title="Add row above"
+                    title="Adicionar linha acima"
                 >
-                    <Plus className="w-3 h-3" /> Row Above
+                    <Plus className="w-3 h-3" /> Adicionar acima
                 </button>
                 <button
                     onClick={() => addRow('bottom')}
                     className="editable-table-button"
-                    title="Add row below"
+                    title="Adicionar linha abaixo"
                 >
-                    <Plus className="w-3 h-3" /> Row Below
+                    <Plus className="w-3 h-3" /> Adicionar abaixo
                 </button>
                 <button
                     onClick={() => addColumn('left')}
                     className="editable-table-button"
-                    title="Add column left"
+                    title="Adicionar coluna à esquerda"
                 >
-                    <Plus className="w-3 h-3" /> Col Left
+                    <Plus className="w-3 h-3" /> Adicionar à esquerda
                 </button>
                 <button
                     onClick={() => addColumn('right')}
                     className="editable-table-button"
-                    title="Add column right"
+                    title="Adicionar coluna à direita"
                 >
-                    <Plus className="w-3 h-3" /> Col Right
+                    <Plus className="w-3 h-3" /> Adicionar à direita
                 </button>
             </div>
 
@@ -528,7 +528,7 @@ export const EditableTable = ({ html, onChange }: EditableTableProps) => {
                                         <div
                                             className="resize-handle"
                                             onMouseDown={(e) => handleResizeStart(e, colIndex)}
-                                            title="Drag to resize column"
+                                            title="Arraste para redimensionar a coluna"
                                         />
                                     </th>
                                 ))}
@@ -582,7 +582,7 @@ export const EditableTable = ({ html, onChange }: EditableTableProps) => {
                                     <button
                                         onClick={() => deleteRow(rowIndex + 1)}
                                         className="delete-button"
-                                        title="Delete row"
+                                        title="Excluir linha"
                                     >
                                         <Trash2 className="w-3 h-3" />
                                     </button>
@@ -599,7 +599,7 @@ export const EditableTable = ({ html, onChange }: EditableTableProps) => {
                                     <button
                                         onClick={() => deleteColumn(colIndex)}
                                         className="delete-button"
-                                        title="Delete column"
+                                        title="Excluir coluna"
                                     >
                                         <Trash2 className="w-3 h-3" />
                                     </button>

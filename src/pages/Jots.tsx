@@ -14,13 +14,13 @@ interface Jot {
 const initialJots: Jot[] = [
     {
         id: '1',
-        content: 'Your mistake was a hidden intention',
+        content: 'Seu erro foi uma intenção oculta',
         date: new Date('2025-12-16'),
         tags: ['philosophy'],
     },
     {
         id: '2',
-        title: 'untitled note',
+        title: 'Nota Sem Título',
         content: '',
         date: new Date('2025-12-16'),
         tags: [],
@@ -129,7 +129,7 @@ export const Jots = () => {
         const grouped: Record<string, Jot[]> = {};
 
         jotsToGroup.forEach(jot => {
-            const dateKey = jot.date.toLocaleDateString('en-US', {
+            const dateKey = jot.date.toLocaleDateString('pt-BR', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric'
@@ -175,14 +175,14 @@ export const Jots = () => {
                                     <button
                                         onClick={saveEdit}
                                         className="p-1.5 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors"
-                                        title="Save"
+                                        title="Salvar"
                                     >
                                         <Check className="w-4 h-4" />
                                     </button>
                                     <button
                                         onClick={cancelEdit}
                                         className="p-1.5 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors"
-                                        title="Cancel"
+                                        title="Cancelar"
                                     >
                                         <X className="w-4 h-4" />
                                     </button>
@@ -200,7 +200,7 @@ export const Jots = () => {
                                     <button
                                         onClick={() => setShowOptions(showOptions === jot.id ? null : jot.id)}
                                         className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md"
-                                        title="More options"
+                                        title="Mais opções"
                                     >
                                         <MoreHorizontal className="w-4 h-4 text-gray-400" />
                                     </button>
@@ -212,14 +212,14 @@ export const Jots = () => {
                                                 className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                                             >
                                                 <Edit className="w-4 h-4" />
-                                                Edit
+                                                Editar
                                             </button>
                                             <button
                                                 onClick={() => deleteJot(jot.id)}
                                                 className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700"
                                             >
                                                 <Trash2 className="w-4 h-4" />
-                                                Delete
+                                                Excluir
                                             </button>
                                         </div>
                                     )}
@@ -266,7 +266,7 @@ export const Jots = () => {
             <header className="flex items-center justify-between mb-8 animate-fade-in">
                 <div className="flex items-center gap-4">
                     <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
-                        {selectedTag ? `Filtered by: ${selectedTag}` : 'All notes'}
+                        {selectedTag ? `Filtrado por: ${selectedTag}` : 'Todas as notas'}
                     </h1>
                     {selectedTag && (
                         <button
@@ -274,7 +274,7 @@ export const Jots = () => {
                             className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
                         >
                             <XCircle className="w-4 h-4" />
-                            Clear filter
+                            Limpar filtro
                         </button>
                     )}
                 </div>
@@ -283,7 +283,7 @@ export const Jots = () => {
                     className="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
                 >
                     <Plus className="w-4 h-4" />
-                    New jot
+                    Nova anotação
                 </button>
             </header>
 
@@ -294,7 +294,7 @@ export const Jots = () => {
                             ref={newJotRef}
                             value={newJotContent}
                             onChange={(e) => setNewJotContent(e.target.value)}
-                            placeholder="What's on your mind?"
+                            placeholder="O que está pensando?"
                             className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 resize-none focus:outline-none focus:ring-2 focus:ring-teal-500"
                             rows={4}
                         />
@@ -306,13 +306,13 @@ export const Jots = () => {
                                 }}
                                 className="px-3 py-1.5 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
                             >
-                                Cancel
+                                Cancelar
                             </button>
                             <button
                                 onClick={createNewJot}
                                 className="px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white rounded-md transition-colors"
                             >
-                                Save
+                                Salvar
                             </button>
                         </div>
                     </div>
@@ -334,10 +334,10 @@ export const Jots = () => {
                         <div className="text-gray-400 dark:text-gray-500">
                             <ChevronRight className="w-12 h-12 mx-auto mb-4 opacity-30" />
                             <p className="text-lg">
-                                {selectedTag ? `No jots found with tag "${selectedTag}"` : 'No jots yet'}
+                                {selectedTag ? `Nenhuma anotação encontrada com a tag "${selectedTag}"` : 'Nenhuma anotação ainda'}
                             </p>
                             <p className="text-sm mt-2">
-                                {selectedTag ? 'Try selecting a different tag or clear the filter.' : 'Create your first jot to get started.'}
+                                {selectedTag ? 'Tente selecionar uma tag diferente ou limpar o filtro.' : 'Crie sua primeira anotação para começar.'}
                             </p>
                         </div>
                     </div>

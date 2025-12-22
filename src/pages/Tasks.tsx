@@ -16,21 +16,21 @@ interface Task {
 const mockTasks: Task[] = [
     {
         id: '1',
-        title: 'Complete MaxNote dashboard design',
-        description: 'Finalize the dashboard layout with all components and interactions',
+        title: 'Concluir o design do painel MaxNote',
+        description: 'Finalizar o layout do dashboard com todos os componentes e interações',
         completed: false,
         priority: 'high',
         dueDate: new Date('2025-12-18'),
         tags: ['design', 'urgent'],
         subtasks: [
-            { id: '1-1', title: 'Create wireframes', completed: true, priority: 'medium', tags: [] },
-            { id: '1-2', title: 'Design mockups', completed: true, priority: 'medium', tags: [] },
-            { id: '1-3', title: 'Get feedback', completed: false, priority: 'medium', tags: [] },
+            { id: '1-1', title: 'Criar wireframes', completed: true, priority: 'medium', tags: [] },
+            { id: '1-2', title: 'Design de mockups', completed: true, priority: 'medium', tags: [] },
+            { id: '1-3', title: 'Obter feedback', completed: false, priority: 'medium', tags: [] },
         ],
     },
     {
         id: '2',
-        title: 'Review pull requests',
+        title: 'Revisar pull requests',
         completed: false,
         priority: 'medium',
         dueDate: new Date('2025-12-17'),
@@ -38,15 +38,15 @@ const mockTasks: Task[] = [
     },
     {
         id: '3',
-        title: 'Update documentation',
-        description: 'Add new features to the user guide and API documentation',
+        title: 'Atualizar documentação',
+        description: 'Adicionar novos recursos ao guia do usuário e documentação da API',
         completed: false,
         priority: 'low',
         tags: ['documentation'],
     },
     {
         id: '4',
-        title: 'Team meeting preparation',
+        title: 'Preparação para reunião de equipe',
         completed: true,
         priority: 'medium',
         dueDate: new Date('2025-12-15'),
@@ -201,14 +201,14 @@ export const Tasks = () => {
                                 value={editingTitle}
                                 onChange={(e) => setEditingTitle(e.target.value)}
                                 className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                                placeholder="Task title"
+                                placeholder="Título da tarefa"
                             />
                             <textarea
                                 value={editingDescription}
                                 onChange={(e) => setEditingDescription(e.target.value)}
                                 className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 resize-none focus:outline-none focus:ring-2 focus:ring-teal-500"
                                 rows={2}
-                                placeholder="Task description"
+                                placeholder="Descrição da tarefa"
                             />
                             <div className="flex gap-2 flex-wrap">
                                 <select
@@ -216,9 +216,9 @@ export const Tasks = () => {
                                     onChange={(e) => setEditingPriority(e.target.value as 'low' | 'medium' | 'high')}
                                     className="p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
                                 >
-                                    <option value="low">Low Priority</option>
-                                    <option value="medium">Medium Priority</option>
-                                    <option value="high">High Priority</option>
+                                    <option value="low">Baixa Prioridade</option>
+                                    <option value="medium">Média Prioridade</option>
+                                    <option value="high">Alta Prioridade</option>
                                 </select>
                                 <input
                                     type="date"
@@ -231,7 +231,7 @@ export const Tasks = () => {
                                     value={editingTags}
                                     onChange={(e) => setEditingTags(e.target.value)}
                                     className="flex-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                                    placeholder="Tags (comma separated)"
+                                    placeholder="Tags (separadas por vírgula)"
                                 />
                             </div>
                             <div className="flex gap-2">
@@ -258,7 +258,7 @@ export const Tasks = () => {
                                 </h3>
                                 {task.priority === 'high' && !task.completed && (
                                     <span className="shrink-0 inline-flex items-center text-xs bg-red-50 text-red-600 px-2 py-0.5 rounded-full border border-red-200">
-                                        High
+                                        Alta
                                     </span>
                                 )}
                             </div>
@@ -274,7 +274,7 @@ export const Tasks = () => {
                                         : 'text-gray-500'
                                         }`}>
                                         <CalendarIcon className="w-3.5 h-3.5" />
-                                        {task.dueDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                        {task.dueDate.toLocaleDateString('pt-BR', { month: 'short', day: 'numeric' })}
                                     </span>
                                 )}
 
@@ -312,14 +312,14 @@ export const Tasks = () => {
                                         className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                                     >
                                         <Edit className="w-4 h-4" />
-                                        Edit
+                                        Editar
                                     </button>
                                     <button
                                         onClick={() => deleteTask(task.id)}
                                         className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700"
                                     >
                                         <Trash2 className="w-4 h-4" />
-                                        Delete
+                                        Excluir
                                     </button>
                                 </div>
                             )}
@@ -335,22 +335,22 @@ export const Tasks = () => {
             <header className="mb-8">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-4">
-                        <h1 className="text-3xl font-bold text-gray-800">Tasks</h1>
+                        <h1 className="text-3xl font-bold text-gray-800">Tarefas</h1>
                         {selectedTag && (
                             <button
                                 onClick={clearTagFilter}
                                 className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
                             >
                                 <XCircle className="w-4 h-4" />
-                                Clear filter
+                                Limpar filtro
                             </button>
                         )}
                     </div>
                 </div>
                 <p className="text-gray-500 text-sm">
                     {selectedTag
-                        ? `${tagFilteredTasks.length} tasks with tag "${selectedTag}" (${activeTasks.length} active, ${completedTasks.length} completed)`
-                        : `${activeTasks.length} active, ${completedTasks.length} completed`
+                        ? `${tagFilteredTasks.length} tarefas com a tag "${selectedTag}" (${activeTasks.length} ativas, ${completedTasks.length} concluídas)`
+                        : `${activeTasks.length} ativas, ${completedTasks.length} concluídas`
                     }
                 </p>
             </header>
@@ -361,21 +361,21 @@ export const Tasks = () => {
                     className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${filter === 'all' ? 'bg-teal-50 text-teal-700' : 'text-gray-600 hover:bg-gray-100'
                         }`}
                 >
-                    All ({tagFilteredTasks.length})
+                    Todas ({tagFilteredTasks.length})
                 </button>
                 <button
                     onClick={() => setFilter('active')}
                     className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${filter === 'active' ? 'bg-teal-50 text-teal-700' : 'text-gray-600 hover:bg-gray-100'
                         }`}
                 >
-                    Active ({tagFilteredTasks.filter(t => !t.completed).length})
+                    Ativas ({tagFilteredTasks.filter(t => !t.completed).length})
                 </button>
                 <button
                     onClick={() => setFilter('completed')}
                     className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${filter === 'completed' ? 'bg-teal-50 text-teal-700' : 'text-gray-600 hover:bg-gray-100'
                         }`}
                 >
-                    Completed ({tagFilteredTasks.filter(t => t.completed).length})
+                    Concluídas ({tagFilteredTasks.filter(t => t.completed).length})
                 </button>
             </div>
 
@@ -388,14 +388,14 @@ export const Tasks = () => {
                             value={newTaskTitle}
                             onChange={(e) => setNewTaskTitle(e.target.value)}
                             className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                            placeholder="Task title"
+                            placeholder="Título da tarefa"
                         />
                         <textarea
                             value={newTaskDescription}
                             onChange={(e) => setNewTaskDescription(e.target.value)}
                             className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 resize-none focus:outline-none focus:ring-2 focus:ring-teal-500"
                             rows={3}
-                            placeholder="Task description"
+                            placeholder="Descrição da tarefa"
                         />
                         <div className="flex gap-2 flex-wrap">
                             <select
@@ -403,9 +403,9 @@ export const Tasks = () => {
                                 onChange={(e) => setNewTaskPriority(e.target.value as 'low' | 'medium' | 'high')}
                                 className="p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
                             >
-                                <option value="low">Low Priority</option>
-                                <option value="medium">Medium Priority</option>
-                                <option value="high">High Priority</option>
+                                <option value="low">Baixa Prioridade</option>
+                                <option value="medium">Média Prioridade</option>
+                                <option value="high">Alta Prioridade</option>
                             </select>
                             <input
                                 type="date"
@@ -418,7 +418,7 @@ export const Tasks = () => {
                                 value={newTaskTags}
                                 onChange={(e) => setNewTaskTags(e.target.value)}
                                 className="flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                                placeholder="Tags (comma separated)"
+                                placeholder="Tags (separadas por vírgula)"
                             />
                         </div>
                         <div className="flex justify-end gap-3">
@@ -433,13 +433,13 @@ export const Tasks = () => {
                                 }}
                                 className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
                             >
-                                Cancel
+                                Cancelar
                             </button>
                             <button
                                 onClick={createNewTask}
                                 className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-md transition-colors"
                             >
-                                Create Task
+                                Criar Tarefa
                             </button>
                         </div>
                     </div>
@@ -458,18 +458,18 @@ export const Tasks = () => {
                         <Circle className="w-12 h-12 mx-auto mb-3 opacity-30" />
                         <p className="text-sm">
                             {selectedTag
-                                ? `No tasks found with tag "${selectedTag}"`
+                                ? `Nenhuma tarefa encontrada com a tag "${selectedTag}"`
                                 : filter === 'active'
-                                    ? 'No active tasks'
+                                    ? 'Nenhuma tarefa ativa'
                                     : filter === 'completed'
-                                        ? 'No completed tasks'
-                                        : 'No tasks found'
+                                        ? 'Nenhuma tarefa concluída'
+                                        : 'Nenhuma tarefa encontrada'
                             }
                         </p>
                         <p className="text-xs mt-1">
                             {selectedTag
-                                ? 'Try selecting a different tag or clear the filter.'
-                                : 'Create your first task to get started.'
+                                ? 'Tente selecionar uma tag diferente ou limpar o filtro.'
+                                : 'Crie sua primeira tarefa para começar.'
                             }
                         </p>
                     </div>
@@ -482,7 +482,7 @@ export const Tasks = () => {
                     className="mt-6 w-full flex items-center justify-center gap-2 p-4 border-2 border-dashed border-gray-200 rounded-lg text-gray-400 hover:border-teal-300 hover:text-teal-600 transition-colors"
                 >
                     <Plus className="w-5 h-5" />
-                    <span className="font-medium">Add new task</span>
+                    <span className="font-medium">Adicionar nova tarefa</span>
                 </button>
             )}
         </div>

@@ -29,7 +29,7 @@ export const TagProvider = ({ children }: { children: ReactNode }) => {
 export const useTag = () => {
     const context = useContext(TagContext);
     if (!context) {
-        throw new Error('useTag must be used within TagProvider');
+        throw new Error('useTag deve ser usado dentro de TagProvider');
     }
     return context;
 };

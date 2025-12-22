@@ -16,7 +16,7 @@ interface Event {
 const mockEvents: Event[] = [
     {
         id: '1',
-        title: 'Team standup',
+        title: 'Reunião de equipe',
         date: new Date('2025-12-16'),
         startTime: '09:00',
         endTime: '09:30',
@@ -27,7 +27,7 @@ const mockEvents: Event[] = [
     },
     {
         id: '2',
-        title: 'Deadline: MaxNote Launch',
+        title: 'Prazo: Lançamento do MaxNote',
         date: new Date('2025-12-18'),
         startTime: '17:00',
         endTime: '17:00',
@@ -36,7 +36,7 @@ const mockEvents: Event[] = [
     },
     {
         id: '3',
-        title: 'Doctor appointment',
+        title: 'Consulta médica',
         date: new Date('2025-12-18'),
         startTime: '14:00',
         endTime: '15:00',
@@ -46,7 +46,7 @@ const mockEvents: Event[] = [
     },
     {
         id: '4',
-        title: 'Product demo',
+        title: 'Demonstração do produto',
         date: new Date('2025-12-20'),
         startTime: '15:00',
         endTime: '16:00',
@@ -213,8 +213,8 @@ export const Calendar = () => {
     };
 
     const days = getDaysInMonth(currentDate);
-    const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const monthName = currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+    const monthName = currentDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
 
     const upcomingEvents = events
         .filter(event => event.date >= new Date())
@@ -238,7 +238,7 @@ export const Calendar = () => {
                     value={isEditing ? editingTitle : newEventTitle}
                     onChange={(e) => isEditing ? setEditingTitle(e.target.value) : setNewEventTitle(e.target.value)}
                     className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                    placeholder="Event title"
+                    placeholder="Título do evento"
                 />
                 <div className="grid grid-cols-2 gap-3">
                     <input
@@ -252,10 +252,10 @@ export const Calendar = () => {
                         onChange={(e) => isEditing ? setEditingType(e.target.value as any) : setNewEventType(e.target.value as any)}
                         className="p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
                     >
-                        <option value="event">Event</option>
-                        <option value="meeting">Meeting</option>
-                        <option value="task">Task</option>
-                        <option value="reminder">Reminder</option>
+                        <option value="event">Evento</option>
+                        <option value="meeting">Reunião</option>
+                        <option value="task">Tarefa</option>
+                        <option value="reminder">Lembrete</option>
                     </select>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
@@ -277,17 +277,17 @@ export const Calendar = () => {
                     value={isEditing ? editingLocation : newEventLocation}
                     onChange={(e) => isEditing ? setEditingLocation(e.target.value) : setNewEventLocation(e.target.value)}
                     className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                    placeholder="Location (optional)"
+                    placeholder="Local (opcional)"
                 />
                 <input
                     type="text"
                     value={isEditing ? editingAttendees : newEventAttendees}
                     onChange={(e) => isEditing ? setEditingAttendees(e.target.value) : setNewEventAttendees(e.target.value)}
                     className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                    placeholder="Attendees (comma separated, optional)"
+                    placeholder="Participantes (separados por vírgula, opcional)"
                 />
                 <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Color:</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Cor:</span>
                     <div className="flex gap-2">
                         {['bg-blue-500', 'bg-green-500', 'bg-red-500', 'bg-purple-500', 'bg-yellow-500', 'bg-pink-500'].map(color => (
                             <button
@@ -303,13 +303,13 @@ export const Calendar = () => {
                         onClick={onCancel}
                         className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
                     >
-                        Cancel
+                        Cancelar
                     </button>
                     <button
                         onClick={onSave}
                         className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-md transition-colors"
                     >
-                        {isEditing ? 'Update Event' : 'Create Event'}
+                        {isEditing ? 'Atualizar Evento' : 'Criar Evento'}
                     </button>
                 </div>
             </div>
@@ -340,7 +340,7 @@ export const Calendar = () => {
                                 onClick={() => setCurrentDate(new Date())}
                                 className="px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
                             >
-                                Today
+                                Hoje
                             </button>
                         </div>
                     </div>
@@ -351,21 +351,21 @@ export const Calendar = () => {
                             className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${view === 'day' ? 'bg-teal-50 text-teal-700' : 'text-gray-600 hover:bg-gray-100'
                                 }`}
                         >
-                            Day
+                            Dia
                         </button>
                         <button
                             onClick={() => setView('week')}
                             className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${view === 'week' ? 'bg-teal-50 text-teal-700' : 'text-gray-600 hover:bg-gray-100'
                                 }`}
                         >
-                            Week
+                            Semana
                         </button>
                         <button
                             onClick={() => setView('month')}
                             className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${view === 'month' ? 'bg-teal-50 text-teal-700' : 'text-gray-600 hover:bg-gray-100'
                                 }`}
                         >
-                            Month
+                            Mês
                         </button>
                     </div>
                 </header>
@@ -444,7 +444,7 @@ export const Calendar = () => {
                                                                     className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                                                                 >
                                                                     <Edit className="w-4 h-4" />
-                                                                    Edit
+                                                                    Editar
                                                                 </button>
                                                                 <button
                                                                     onClick={(e) => {
@@ -454,7 +454,7 @@ export const Calendar = () => {
                                                                     className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700"
                                                                 >
                                                                     <Trash2 className="w-4 h-4" />
-                                                                    Delete
+                                                                    Excluir
                                                                 </button>
                                                             </div>
                                                         )}
@@ -474,7 +474,7 @@ export const Calendar = () => {
             <div className="w-80 border-l border-gray-200 bg-gray-50 p-6 overflow-auto">
                 <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
                     <CalendarIcon className="w-5 h-5 text-teal-600" />
-                    Upcoming Events
+                    Próximos Eventos
                 </h2>
 
                 {editingEventId && (
@@ -495,7 +495,7 @@ export const Calendar = () => {
                                     <div className="space-y-1 text-xs text-gray-600">
                                         <div className="flex items-center gap-2">
                                             <CalendarIcon className="w-3.5 h-3.5" />
-                                            <span>{event.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                                            <span>{event.date.toLocaleDateString('pt-BR', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <Clock className="w-3.5 h-3.5" />
@@ -530,14 +530,14 @@ export const Calendar = () => {
                                         className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                                     >
                                         <Edit className="w-4 h-4" />
-                                        Edit
+                                        Editar
                                     </button>
                                     <button
                                         onClick={() => deleteEvent(event.id)}
                                         className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700"
                                     >
                                         <Trash2 className="w-4 h-4" />
-                                        Delete
+                                        Excluir
                                     </button>
                                 </div>
                             )}
@@ -551,7 +551,7 @@ export const Calendar = () => {
                         className="w-full flex items-center justify-center gap-2 p-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-teal-400 hover:text-teal-600 transition-colors"
                     >
                         <Plus className="w-5 h-5" />
-                        <span className="font-medium">Add event</span>
+                        <span className="font-medium">Adicionar evento</span>
                     </button>
                 )}
             </div>

@@ -78,16 +78,16 @@ const UserDropdown = () => {
                 <div className="absolute left-0 right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-20 overflow-hidden">
                     <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
                         <User className="w-4 h-4" />
-                        Profile
+                        Perfil
                     </button>
                     <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
                         <Settings className="w-4 h-4" />
-                        Settings
+                        Configurações
                     </button>
                     <div className="border-t border-gray-100 dark:border-gray-700">
                         <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700">
                             <LogOut className="w-4 h-4" />
-                            Sign out
+                            Sair
                         </button>
                     </div>
                 </div>
@@ -137,21 +137,21 @@ export const Sidebar = () => {
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">
                     MaxNote
                 </h1>
-                <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Your intelligent workspace</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Seu espaço de trabalho inteligente</p>
             </div>
 
             <UserDropdown />
 
             <div className="mb-6">
-                <SidebarItem to="/jots" icon={PenSquare} label="Jots" />
-                <SidebarItem to="/notes" icon={FileText} label="Notes" />
-                <SidebarItem to="/tasks" icon={CheckCircle2} label="Tasks" />
-                <SidebarItem to="/calendar" icon={CalendarDays} label="Calendar" />
+                <SidebarItem to="/jots" icon={PenSquare} label="Rascunhos" />
+                <SidebarItem to="/notes" icon={FileText} label="Notas" />
+                <SidebarItem to="/tasks" icon={CheckCircle2} label="Tarefas" />
+                <SidebarItem to="/calendar" icon={CalendarDays} label="Calendário" />
             </div>
 
             <div className="mb-6">
                 <div className='flex items-center justify-between px-3 mb-2 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider'>
-                    <span>Shortcuts</span>
+                    <span>Atalhos</span>
                     {!isAddingShortcut ? (
                         <Plus
                             onClick={() => setIsAddingShortcut(true)}
@@ -175,7 +175,7 @@ export const Sidebar = () => {
                                 type="text"
                                 value={newShortcut}
                                 onChange={(e) => setNewShortcut(e.target.value)}
-                                placeholder="Shortcut name"
+                                placeholder="Nome do atalho"
                                 className="flex-1 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-teal-500"
                                 autoFocus
                                 onKeyDown={(e) => {
@@ -191,14 +191,14 @@ export const Sidebar = () => {
                                 onClick={addShortcut}
                                 className="px-2 py-1 text-xs bg-teal-600 text-white rounded hover:bg-teal-700"
                             >
-                                Add
+                                Adicionar
                             </button>
                         </div>
                     </div>
                 )}
 
                 {shortcuts.length === 0 && !isAddingShortcut && (
-                    <div className="px-3 py-2 text-sm text-gray-500 dark:text-gray-600 italic">No shortcuts yet</div>
+                    <div className="px-3 py-2 text-sm text-gray-500 dark:text-gray-600 italic">Nenhum atalho ainda</div>
                 )}
 
                 {shortcuts.map(shortcut => (
@@ -253,16 +253,16 @@ export const Sidebar = () => {
                     {theme === 'light' ? (
                         <>
                             <Moon className="w-5 h-5" />
-                            <span>Dark mode</span>
+                            <span>Modo escuro</span>
                         </>
                     ) : (
                         <>
                             <Sun className="w-5 h-5" />
-                            <span>Light mode</span>
+                            <span>Modo claro</span>
                         </>
                     )}
                 </button>
-                <SidebarItem icon={Settings} label="Settings" />
+                <SidebarItem icon={Settings} label="Configurações" />
             </div>
         </div>
     );

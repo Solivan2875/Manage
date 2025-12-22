@@ -105,7 +105,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
                             <input
                                 ref={searchInputRef}
                                 type="text"
-                                placeholder="Search notes"
+                                placeholder="Pesquisar notas"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 onFocus={() => {
@@ -157,7 +157,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
                     </div>
 
                     <div className="flex items-center gap-3 ml-4">
-                        <button className="p-2 text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors" title="Change View">
+                        <button className="p-2 text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors" title="Alterar Visualização">
                             <LayoutTemplate className="w-5 h-5" />
                         </button>
                         <button
@@ -165,7 +165,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
                             className="bg-teal-600 hover:bg-teal-700 dark:bg-teal-700 dark:hover:bg-teal-600 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2 shadow-sm hover:shadow-md transition-all"
                         >
                             <PenLine className="w-4 h-4" />
-                            New note
+                            Nova nota
                         </button>
                     </div>
                 </header>

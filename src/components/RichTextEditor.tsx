@@ -32,7 +32,7 @@ interface EmbedPlaceholderProps {
 const EmbedPlaceholder = ({ type, onEdit, onDelete }: EmbedPlaceholderProps) => {
     const isYouTube = type === 'youtube';
     const Icon = isYouTube ? Play : FileText;
-    const title = isYouTube ? 'YouTube Video' : 'PDF Document';
+    const title = isYouTube ? 'Vídeo do YouTube' : 'Documento PDF';
     const colorClass = isYouTube ? 'embed-placeholder-youtube' : 'embed-placeholder-pdf';
 
     return (
@@ -42,30 +42,30 @@ const EmbedPlaceholder = ({ type, onEdit, onDelete }: EmbedPlaceholderProps) => 
                     <Icon className="w-5 h-5" />
                 </div>
                 <div>
-                    <div className="embed-placeholder-text">{title} Embed</div>
+                    <div className="embed-placeholder-text">{title} Embutido</div>
                     <div className="text-xs text-gray-500 dark:text-gray-400">
-                        Click preview to view, or edit to modify
+                        Clique na visualização para ver, ou edite para modificar
                     </div>
                 </div>
             </div>
             <div className="embed-placeholder-actions">
                 <button
                     className="embed-placeholder-button"
-                    title="Switch to preview to view"
-                    onClick={() => alert('Switch to preview mode to view the embed')}
+                    title="Mudar para visualização para ver"
+                    onClick={() => alert('Mude para o modo de visualização para ver o conteúdo incorporado')}
                 >
                     <Eye className="w-4 h-4" />
                 </button>
                 <button
                     className="embed-placeholder-button"
-                    title="Edit embed"
+                    title="Editar incorporação"
                     onClick={onEdit}
                 >
                     <Edit className="w-4 h-4" />
                 </button>
                 <button
                     className="embed-placeholder-button"
-                    title="Delete embed"
+                    title="Excluir incorporação"
                     onClick={onDelete}
                 >
                     <Trash2 className="w-4 h-4" />
@@ -90,7 +90,7 @@ export const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorP
     const [showTableInput, setShowTableInput] = useState(false);
     const [tableRows, setTableRows] = useState(3);
     const [tableCols, setTableCols] = useState(3);
-    const [columnWidths, setColumnWidths] = useState<string[]>([]);
+
     const [showGoogleDriveInput, setShowGoogleDriveInput] = useState(false);
     const [googleDriveUrl, setGoogleDriveUrl] = useState('');
 
@@ -251,7 +251,7 @@ export const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorP
                 setYoutubeUrl('');
                 setShowYouTubeInput(false);
             } else {
-                alert('Invalid YouTube URL. Please check and try again.');
+                alert('URL do YouTube inválida. Verifique e tente novamente.');
             }
         }
     };
@@ -265,7 +265,7 @@ export const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorP
                 setGoogleDriveUrl('');
                 setShowGoogleDriveInput(false);
             } else {
-                alert('Invalid Google Drive URL. Please check and try again.');
+                alert('URL do Google Drive inválida. Verifique e tente novamente.');
             }
         }
     };
@@ -273,23 +273,19 @@ export const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorP
     const insertTable = () => {
         let htmlTable = '<table class="note-table">\n';
 
-        // Create header row with column widths
+        // Create header row
         htmlTable += '  <thead>\n    <tr>\n';
         for (let i = 0; i < tableCols; i++) {
-            const width = columnWidths[i] || '';
-            const widthAttr = width ? ` style="width: ${width}"` : '';
-            htmlTable += `      <th${widthAttr}>Header ${i + 1}</th>\n`;
+            htmlTable += `      <th>Cabeçalho ${i + 1}</th>\n`;
         }
         htmlTable += '    </tr>\n  </thead>\n';
 
-        // Create body rows with column widths
+        // Create body rows
         htmlTable += '  <tbody>\n';
         for (let i = 0; i < tableRows; i++) {
             htmlTable += '    <tr>\n';
             for (let j = 0; j < tableCols; j++) {
-                const width = columnWidths[j] || '';
-                const widthAttr = width ? ` style="width: ${width}"` : '';
-                htmlTable += `      <td${widthAttr}>Cell ${i + 1}-${j + 1}</td>\n`;
+                htmlTable += `      <td>Célula ${i + 1}-${j + 1}</td>\n`;
             }
             htmlTable += '    </tr>\n';
         }
@@ -298,124 +294,83 @@ export const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorP
         insertMarkdown(htmlTable, '');
         setTableRows(3);
         setTableCols(3);
-        setColumnWidths([]);
         setShowTableInput(false);
     };
 
-    // Update column widths when number of columns changes
-    const updateColumnWidths = (newCols: number) => {
-        const newWidths = [...columnWidths];
-        if (newCols > columnWidths.length) {
-            // Add new columns with default width
-            for (let i = columnWidths.length; i < newCols; i++) {
-                newWidths.push('');
-            }
-        } else if (newCols < columnWidths.length) {
-            // Remove excess columns
-            newWidths.splice(newCols);
-        }
-        setColumnWidths(newWidths);
-    };
 
-    // Handle column width change
-    const handleColumnWidthChange = (index: number, value: string) => {
-        const newWidths = [...columnWidths];
-        newWidths[index] = value;
-        setColumnWidths(newWidths);
-    };
-
-    // Validate width value
-    const isValidWidth = (value: string): boolean => {
-        if (!value) return true; // Empty value is valid (auto width)
-
-        // Check for valid CSS width formats
-        const validPatterns = [
-            /^\d+px$/, // e.g., 100px
-            /^\d+%$/, // e.g., 20%
-            /^\d+em$/, // e.g., 2em
-            /^\d+rem$/, // e.g., 2rem
-            /^\d+vw$/, // e.g., 50vw
-            /^\d+vh$/, // e.g., 50vh
-            /^auto$/, // auto
-            /^inherit$/, // inherit
-            /^initial$/, // initial
-        ];
-
-        return validPatterns.some(pattern => pattern.test(value));
-    };
 
     const toolbarButtons = [
         {
             icon: Bold,
-            tooltip: 'Bold',
-            action: () => insertMarkdown('**', '**', 'bold text'),
+            tooltip: 'Negrito',
+            action: () => insertMarkdown('**', '**', 'texto em negrito'),
         },
         {
             icon: Italic,
-            tooltip: 'Italic',
-            action: () => insertMarkdown('*', '*', 'italic text'),
+            tooltip: 'Itálico',
+            action: () => insertMarkdown('*', '*', 'texto em itálico'),
         },
         {
             icon: Strikethrough,
-            tooltip: 'Strikethrough',
+            tooltip: 'Tachado',
             action: () => insertMarkdown('~~', '~~', 'strikethrough'),
         },
         {
             icon: Code,
-            tooltip: 'Inline code',
-            action: () => insertMarkdown('`', '`', 'code'),
+            tooltip: 'Código em linha',
+            action: () => insertMarkdown('`', '`', 'código'),
         },
         'divider',
         {
             icon: Heading1,
-            tooltip: 'Heading 1',
-            action: () => insertMarkdown('# ', '', 'Heading 1'),
+            tooltip: 'Cabeçalho 1',
+            action: () => insertMarkdown('# ', '', 'Cabeçalho 1'),
         },
         {
             icon: Heading2,
-            tooltip: 'Heading 2',
-            action: () => insertMarkdown('## ', '', 'Heading 2'),
+            tooltip: 'Cabeçalho 2',
+            action: () => insertMarkdown('## ', '', 'Cabeçalho 2'),
         },
         {
             icon: Heading3,
-            tooltip: 'Heading 3',
-            action: () => insertMarkdown('### ', '', 'Heading 3'),
+            tooltip: 'Cabeçalho 3',
+            action: () => insertMarkdown('### ', '', 'Cabeçalho 3'),
         },
         'divider',
         {
             icon: List,
-            tooltip: 'Bullet list',
-            action: () => insertMarkdown('- ', '', 'List item'),
+            tooltip: 'Lista com marcadores',
+            action: () => insertMarkdown('- ', '', 'Item da lista'),
         },
         {
             icon: ListOrdered,
-            tooltip: 'Numbered list',
-            action: () => insertMarkdown('1. ', '', 'List item'),
+            tooltip: 'Lista numerada',
+            action: () => insertMarkdown('1. ', '', 'Item da lista'),
         },
         {
             icon: Quote,
-            tooltip: 'Quote',
-            action: () => insertMarkdown('> ', '', 'Quote'),
+            tooltip: 'Citação',
+            action: () => insertMarkdown('> ', '', 'Citação'),
         },
         'divider',
         {
             icon: Link,
-            tooltip: 'Insert link',
+            tooltip: 'Inserir link',
             action: () => setShowLinkInput(!showLinkInput),
         },
         {
             icon: Play,
-            tooltip: 'Insert YouTube video',
+            tooltip: 'Inserir vídeo do YouTube',
             action: () => setShowYouTubeInput(!showYouTubeInput),
         },
         {
             icon: FileText,
-            tooltip: 'Insert Google Drive PDF',
+            tooltip: 'Inserir PDF do Google Drive',
             action: () => setShowGoogleDriveInput(!showGoogleDriveInput),
         },
         {
             icon: Table,
-            tooltip: 'Insert table',
+            tooltip: 'Inserir tabela',
             action: () => setShowTableInput(!showTableInput),
         },
     ];
@@ -455,7 +410,7 @@ export const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorP
                             type="text"
                             value={linkText}
                             onChange={(e) => setLinkText(e.target.value)}
-                            placeholder="Link text"
+                            placeholder="Texto do link"
                             className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
                         />
                         <input
@@ -470,7 +425,7 @@ export const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorP
                             className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-md text-sm font-medium transition-colors"
                             type="button"
                         >
-                            Insert
+                            Inserir
                         </button>
                         <button
                             onClick={() => {
@@ -481,7 +436,7 @@ export const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorP
                             className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm transition-colors"
                             type="button"
                         >
-                            Cancel
+                            Cancelar
                         </button>
                     </div>
                 </div>
@@ -495,7 +450,7 @@ export const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorP
                             type="text"
                             value={youtubeUrl}
                             onChange={(e) => setYoutubeUrl(e.target.value)}
-                            placeholder="YouTube URL (e.g., https://www.youtube.com/watch?v=...)"
+                            placeholder="URL do YouTube (ex: https://www.youtube.com/watch?v=...)"
                             className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
                         />
                         <button
@@ -503,7 +458,7 @@ export const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorP
                             className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm font-medium transition-colors"
                             type="button"
                         >
-                            Insert
+                            Inserir
                         </button>
                         <button
                             onClick={() => {
@@ -513,7 +468,7 @@ export const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorP
                             className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm transition-colors"
                             type="button"
                         >
-                            Cancel
+                            Cancelar
                         </button>
                     </div>
                 </div>
@@ -527,7 +482,7 @@ export const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorP
                             type="text"
                             value={googleDriveUrl}
                             onChange={(e) => setGoogleDriveUrl(e.target.value)}
-                            placeholder="Google Drive URL (e.g., https://drive.google.com/file/d/...)"
+                            placeholder="URL do Google Drive (ex: https://drive.google.com/file/d/...)"
                             className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
                         />
                         <button
@@ -535,7 +490,7 @@ export const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorP
                             className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-md text-sm font-medium transition-colors"
                             type="button"
                         >
-                            Insert
+                            Inserir
                         </button>
                         <button
                             onClick={() => {
@@ -545,7 +500,7 @@ export const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorP
                             className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm transition-colors"
                             type="button"
                         >
-                            Cancel
+                            Cancelar
                         </button>
                     </div>
                 </div>
@@ -557,7 +512,7 @@ export const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorP
                     <div className="space-y-3">
                         <div className="flex gap-4 items-center">
                             <div className="flex-1">
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Rows</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Linhas</label>
                                 <input
                                     type="number"
                                     min="1"
@@ -568,7 +523,7 @@ export const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorP
                                 />
                             </div>
                             <div className="flex-1">
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Columns</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Colunas</label>
                                 <input
                                     type="number"
                                     min="1"
@@ -577,42 +532,13 @@ export const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorP
                                     onChange={(e) => {
                                         const newCols = Math.max(1, Math.min(10, parseInt(e.target.value) || 1));
                                         setTableCols(newCols);
-                                        updateColumnWidths(newCols);
                                     }}
                                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
                                 />
                             </div>
                         </div>
 
-                        {/* Column Widths */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Column Widths (optional)</label>
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
-                                {Array.from({ length: tableCols }).map((_, index) => (
-                                    <div key={index} className="flex flex-col">
-                                        <label className="text-xs text-gray-600 dark:text-gray-400 mb-1">
-                                            Column {index + 1}
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={columnWidths[index] || ''}
-                                            onChange={(e) => handleColumnWidthChange(index, e.target.value)}
-                                            placeholder="e.g., 100px, 20%, auto"
-                                            className={`px-2 py-1 border rounded text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-teal-500 ${columnWidths[index] && !isValidWidth(columnWidths[index])
-                                                ? 'border-red-500'
-                                                : 'border-gray-300 dark:border-gray-600'
-                                                }`}
-                                        />
-                                        {columnWidths[index] && !isValidWidth(columnWidths[index]) && (
-                                            <span className="text-xs text-red-500 mt-1">Invalid width</span>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                                Valid formats: 100px, 20%, auto, inherit, etc.
-                            </div>
-                        </div>
+
 
                         <div className="flex gap-2 justify-end">
                             <button
@@ -620,19 +546,18 @@ export const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorP
                                     setShowTableInput(false);
                                     setTableRows(3);
                                     setTableCols(3);
-                                    setColumnWidths([]);
                                 }}
                                 className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm transition-colors"
                                 type="button"
                             >
-                                Cancel
+                                Cancelar
                             </button>
                             <button
                                 onClick={insertTable}
                                 className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm font-medium transition-colors"
                                 type="button"
                             >
-                                Insert Table
+                                Inserir Tabela
                             </button>
                         </div>
                     </div>
@@ -765,8 +690,8 @@ export const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorP
 
             {/* Footer with character count */}
             <div className="flex items-center justify-between px-4 py-2 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-xs text-gray-500 dark:text-gray-400">
-                <span>Markdown supported</span>
-                <span>{value.length} characters</span>
+                <span>Markdown suportado</span>
+                <span>{value.length} caracteres</span>
             </div>
         </div>
     );

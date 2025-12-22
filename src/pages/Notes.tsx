@@ -16,8 +16,8 @@ interface Note {
 const mockNotes: Note[] = [
     {
         id: '1',
-        title: 'MaxNote Features Roadmap',
-        content: 'Planning the future of MaxNote with advanced AI integration, collaborative features, and cross-platform sync...',
+        title: 'Planejamento de Recursos do MaxNote',
+        content: 'Planejando o futuro do MaxNote com integração avançada de IA, recursos colaborativos e sincronização multiplataforma...',
         tags: ['planning', 'roadmap', 'development'],
         createdAt: new Date('2025-12-15'),
         updatedAt: new Date('2025-12-16'),
@@ -25,8 +25,8 @@ const mockNotes: Note[] = [
     },
     {
         id: '2',
-        title: 'Meeting Notes - Q1 Planning',
-        content: 'Discussed quarterly goals, team expansion, and new product initiatives. Key decisions made on budget allocation...',
+        title: 'Notas da Reunião - Planejamento do 1º Trimestre',
+        content: 'Discutidos metas trimestrais, expansão da equipe e novas iniciativas de produtos. Decisões importantes tomadas sobre alocação de orçamento...',
         tags: ['meetings', 'planning', 'business'],
         createdAt: new Date('2025-12-14'),
         updatedAt: new Date('2025-12-15'),
@@ -34,8 +34,8 @@ const mockNotes: Note[] = [
     },
     {
         id: '3',
-        title: 'Book Summary: Deep Work',
-        content: 'Key insights from Cal Newport\'s Deep Work. The ability to focus without distraction is becoming increasingly valuable...',
+        title: 'Resumo do Livro: Trabalho Focado',
+        content: 'Principais insights do livro "Trabalho Focado" de Cal Newport. A capacidade de focar sem distrações está se tornando cada vez mais valiosa...',
         tags: ['books', 'productivity', 'learning'],
         createdAt: new Date('2025-12-10'),
         updatedAt: new Date('2025-12-12'),
@@ -43,8 +43,8 @@ const mockNotes: Note[] = [
     },
     {
         id: '4',
-        title: 'Recipe: Pasta Carbonara',
-        content: 'Ingredients: spaghetti, eggs, pecorino romano, guanciale, black pepper. The secret is in the technique...',
+        title: 'Receita: Pasta Carbonara',
+        content: 'Ingredientes: espaguete, ovos, queijo pecorino romano, guanciale, pimenta preta. O segredo está na técnica...',
         tags: ['recipes', 'cooking', 'italian'],
         createdAt: new Date('2025-12-08'),
         updatedAt: new Date('2025-12-08'),
@@ -101,7 +101,7 @@ export const Notes = () => {
                             togglePin(note.id);
                         }}
                         className="p-1.5 hover:bg-gray-100 rounded-md"
-                        title="Pin note"
+                        title="Fixar nota"
                     >
                         <Star className={`w-4 h-4 ${note.isPinned ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400'}`} />
                     </button>
@@ -111,7 +111,7 @@ export const Notes = () => {
                             setShowOptions(showOptions === note.id ? null : note.id);
                         }}
                         className="p-1.5 hover:bg-gray-100 rounded-md"
-                        title="More options"
+                        title="Mais opções"
                     >
                         <MoreHorizontal className="w-4 h-4 text-gray-400" />
                     </button>
@@ -126,7 +126,7 @@ export const Notes = () => {
                                 className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                             >
                                 <Edit className="w-4 h-4" />
-                                Edit
+                                Editar
                             </button>
                             <button
                                 onClick={(e) => {
@@ -136,7 +136,7 @@ export const Notes = () => {
                                 className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700"
                             >
                                 <Trash2 className="w-4 h-4" />
-                                Delete
+                                Excluir
                             </button>
                         </div>
                     )}
@@ -156,7 +156,7 @@ export const Notes = () => {
 
                 <div className="flex items-center gap-2 text-xs text-gray-400 border-t border-gray-100 pt-3">
                     <Clock className="w-3.5 h-3.5" />
-                    <span>Updated {note.updatedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                    <span>Atualizado em {note.updatedAt.toLocaleDateString('pt-BR', { month: 'short', day: 'numeric' })}</span>
                 </div>
             </div>
         );
@@ -187,7 +187,7 @@ export const Notes = () => {
                 <div className="flex items-center gap-3 text-xs text-gray-400 shrink-0">
                     <span className="flex items-center gap-1">
                         <Clock className="w-3.5 h-3.5" />
-                        {note.updatedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                        {note.updatedAt.toLocaleDateString('pt-BR', { month: 'short', day: 'numeric' })}
                     </span>
                     <button
                         onClick={(e) => {
@@ -218,7 +218,7 @@ export const Notes = () => {
                                 className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                             >
                                 <Edit className="w-4 h-4" />
-                                Edit
+                                Editar
                             </button>
                             <button
                                 onClick={(e) => {
@@ -228,7 +228,7 @@ export const Notes = () => {
                                 className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700"
                             >
                                 <Trash2 className="w-4 h-4" />
-                                Delete
+                                Excluir
                             </button>
                         </div>
                     )}
@@ -242,21 +242,21 @@ export const Notes = () => {
             <header className="flex items-center justify-between mb-8">
                 <div>
                     <div className="flex items-center gap-4 mb-1">
-                        <h1 className="text-3xl font-bold text-gray-800">Notes</h1>
+                        <h1 className="text-3xl font-bold text-gray-800">Notas</h1>
                         {selectedTag && (
                             <button
                                 onClick={clearTagFilter}
                                 className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
                             >
                                 <XCircle className="w-4 h-4" />
-                                Clear filter
+                                Limpar filtro
                             </button>
                         )}
                     </div>
                     <p className="text-gray-500 text-sm">
                         {selectedTag
-                            ? `${filteredNotes.length} notes with tag "${selectedTag}"`
-                            : `${notes.length} notes in total`
+                            ? `${filteredNotes.length} notas com a tag "${selectedTag}"`
+                            : `${notes.length} notas no total`
                         }
                     </p>
                 </div>
@@ -267,21 +267,21 @@ export const Notes = () => {
                         className="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
                     >
                         <Plus className="w-4 h-4" />
-                        New note
+                        Nova nota
                     </button>
                     <button
                         onClick={() => setViewMode('grid')}
                         className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${viewMode === 'grid' ? 'bg-teal-50 text-teal-700' : 'text-gray-600 hover:bg-gray-100'
                             }`}
                     >
-                        Grid
+                        Modo grade
                     </button>
                     <button
                         onClick={() => setViewMode('list')}
                         className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${viewMode === 'list' ? 'bg-teal-50 text-teal-700' : 'text-gray-600 hover:bg-gray-100'
                             }`}
                     >
-                        List
+                        Modo lista
                     </button>
                 </div>
             </header>
@@ -291,7 +291,7 @@ export const Notes = () => {
                 <section className="mb-8">
                     <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4 flex items-center gap-2">
                         <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                        Pinned Notes
+                        Notas Fixadas
                     </h2>
                     {viewMode === 'grid' ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -307,7 +307,7 @@ export const Notes = () => {
 
             <section>
                 <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">
-                    {selectedTag ? `Notes with "${selectedTag}"` : 'All Notes'}
+                    {selectedTag ? `Notas com "${selectedTag}"` : 'Todas as Notas'}
                 </h2>
                 {regularNotes.length > 0 ? (
                     viewMode === 'grid' ? (
@@ -324,10 +324,10 @@ export const Notes = () => {
                         <div className="text-gray-400 dark:text-gray-500">
                             <Tag className="w-12 h-12 mx-auto mb-4 opacity-30" />
                             <p className="text-lg">
-                                {selectedTag ? `No notes found with tag "${selectedTag}"` : 'No notes yet'}
+                                {selectedTag ? `Nenhuma nota encontrada com a tag "${selectedTag}"` : 'Nenhuma nota ainda'}
                             </p>
                             <p className="text-sm mt-2">
-                                {selectedTag ? 'Try selecting a different tag or clear the filter.' : 'Create your first note to get started.'}
+                                {selectedTag ? 'Tente selecionar uma tag diferente ou limpar o filtro.' : 'Crie sua primeira nota para começar.'}
                             </p>
                         </div>
                     </div>
