@@ -1,0 +1,20 @@
+{
+    "extends": "./tsconfig.app.json",
+    "compilerOptions": {
+        "allowJs": true,
+        "esModuleInterop": true,
+        "module": "ES2020",
+        "moduleResolution": "node",
+        "verbatimModuleSyntax": false,
+        "types": [
+            "jest",
+            "node",
+            "vite/client"
+        ]
+    },
+    "include": [
+        "src/**/__tests__/**/*",
+        "src/**/*.test.*",
+        "src/**/*.spec.*"
+    ]
+}

@@ -1,7 +1,11 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, Eye, Settings, Calendar, Tag, FileText, X, Check } from 'lucide-react';
+import { ArrowLeft, Save, Eye, Settings, Calendar, FileText, X, Check, Loader2 } from 'lucide-react';
 import { RichTextEditor } from '../components/RichTextEditor';
+import { TagInput } from '../components/TagInput';
+import { useAuth } from '../context/AuthContext';
+import { useTag } from '../context/TagContext';
+import { notesService, type Note as SupabaseNote } from '../services/supabaseService';
 
 interface Note {
     id: string;
@@ -13,131 +17,73 @@ interface Note {
     isPinned: boolean;
 }
 
+const mapSupabaseNote = (note: SupabaseNote): Note => ({
+    id: note.id,
+    title: note.title,
+    content: note.content,
+    tags: note.tags || [],
+    createdAt: new Date(note.created_at),
+    updatedAt: new Date(note.updated_at),
+    isPinned: note.is_pinned,
+});
+
 export const NoteEditor = () => {
     const { id } = useParams<{ id?: string }>();
     const navigate = useNavigate();
+    const { user } = useAuth();
+    const { refreshTags } = useTag();
     const [note, setNote] = useState<Note | null>(null);
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
-    const [tags, setTags] = useState('');
+    const [tags, setTags] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
     const [isPreviewMode, setIsPreviewMode] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
     const [showLinkDialog, setShowLinkDialog] = useState(false);
     const [linkUrl, setLinkUrl] = useState('');
     const [linkText, setLinkText] = useState('');
     const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'unsaved'>('saved');
+    const [error, setError] = useState<string | null>(null);
     const titleRef = useRef<HTMLInputElement>(null);
     const editorRef = useRef<HTMLDivElement>(null);
     const previewRef = useRef<HTMLDivElement>(null);
 
-    // Mock data - in a real app, this would come from an API
-    const mockNotes: Note[] = [
-        {
-            id: '1',
-            title: 'Planejamento de Recursos do MaxNote',
-            content: 'Planejando o futuro do MaxNote com integração avançada de IA, recursos colaborativos e sincronização multiplataforma...',
-            tags: ['planning', 'roadmap', 'development'],
-            createdAt: new Date('2025-12-15'),
-            updatedAt: new Date('2025-12-16'),
-            isPinned: true,
-        },
-        {
-            id: '2',
-            title: 'Notas da Reunião - Planejamento do 1º Trimestre',
-            content: 'Discutidas metas trimestrais, expansão da equipe e novas iniciativas de produtos. Decisões importantes tomadas sobre alocação de orçamento...',
-            tags: ['meetings', 'planning', 'business'],
-            createdAt: new Date('2025-12-14'),
-            updatedAt: new Date('2025-12-15'),
-            isPinned: false,
-        },
-        {
-            id: '3',
-            title: 'Exemplo de Tabela Interativa',
-            content: `<table class="note-table">
-  <thead>
-    <tr>
-      <th>Cabeçalho 1</th>
-      <th>Cabeçalho 2</th>
-      <th>Cabeçalho 3</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Célula 1-1</td>
-      <td>Célula 1-2</td>
-      <td>Célula 1-3</td>
-    </tr>
-    <tr>
-      <td>Célula 2-1</td>
-      <td>Célula 2-2</td>
-      <td>Célula 2-3</td>
-    </tr>
-    <tr>
-      <td>Célula 3-1</td>
-      <td>Célula 3-2</td>
-      <td>Célula 3-3</td>
-    </tr>
-  </tbody>
-</table>`,
-            tags: ['tables', 'example', 'interactive'],
-            createdAt: new Date('2025-12-16'),
-            updatedAt: new Date('2025-12-16'),
-            isPinned: false,
-        },
-        {
-            id: '4',
-            title: 'Nota de Exemplos de Incorporação',
-            content: `# Exemplos de Incorporação
-
-Esta nota contém exemplos de conteúdo incorporado:
-
-## Vídeo do YouTube
-Aqui está um exemplo de incorporação de vídeo do YouTube:
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="rounded-lg shadow-md"></iframe>
-
-## Documento PDF
-Aqui está um exemplo de incorporação de PDF do Google Drive:
-
-<iframe src="https://drive.google.com/file/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/preview" width="100%" height="600" class="border border-gray-300 dark:border-gray-600 rounded-lg shadow-md"></iframe>
-
-## Conteúdo Misto
-Você pode misturar incorporações com texto regular e outros elementos markdown.
-
-* Item de lista 1
-* Item de lista 2
-
-**Texto em negrito** e *texto em itálico* podem ser usados junto com incorporações.`,
-            tags: ['embeds', 'examples', 'youtube', 'pdf'],
-            createdAt: new Date('2025-12-16'),
-            updatedAt: new Date('2025-12-16'),
-            isPinned: false,
-        },
-    ];
-
-    useEffect(() => {
-        if (id && id !== 'new') {
-            // Load existing note
-            const existingNote = mockNotes.find(n => n.id === id);
-            if (existingNote) {
-                setNote(existingNote);
-                setTitle(existingNote.title);
-                setContent(existingNote.content);
-                setTags(existingNote.tags.join(', '));
-            }
-        } else {
+    // Load note from Supabase
+    const loadNote = useCallback(async () => {
+        if (!user || !id || id === 'new') {
             // New note
             setNote(null);
             setTitle('');
             setContent('');
-            setTags('');
+            setTags([]);
+            setTimeout(() => titleRef.current?.focus(), 100);
+            return;
         }
 
-        // Focus on title field
-        setTimeout(() => {
-            titleRef.current?.focus();
-        }, 100);
-    }, [id]);
+        setIsLoading(true);
+        try {
+            const { data, error } = await notesService.getById(id);
+            if (error) {
+                setError(error);
+            } else if (data) {
+                const mappedNote = mapSupabaseNote(data);
+                setNote(mappedNote);
+                setTitle(mappedNote.title);
+                setContent(mappedNote.content);
+                setTags(mappedNote.tags);
+            }
+        } catch (err) {
+            console.error('Error loading note:', err);
+            setError('Erro ao carregar nota');
+        } finally {
+            setIsLoading(false);
+            setTimeout(() => titleRef.current?.focus(), 100);
+        }
+    }, [id, user]);
+
+    useEffect(() => {
+        loadNote();
+    }, [loadNote]);
 
     useEffect(() => {
         if (saveStatus === 'unsaved') {
@@ -197,24 +143,53 @@ Você pode misturar incorporações com texto regular e outros elementos markdow
         };
     }, [isPreviewMode, showLinkDialog]);
 
-    const handleSave = () => {
+    const handleSave = async () => {
         setSaveStatus('saving');
+        setError(null);
 
-        // Simulate API call
-        setTimeout(() => {
-            const updatedNote: Note = {
-                id: note?.id || Date.now().toString(),
-                title: title.trim() || 'Nota Sem Título',
-                content: content.trim(),
-                tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag),
-                createdAt: note?.createdAt || new Date(),
-                updatedAt: new Date(),
-                isPinned: note?.isPinned || false,
-            };
+        try {
+            if (note) {
+                // Update existing note
+                const { data, error } = await notesService.update(note.id, {
+                    title: title.trim() || 'Nota Sem Título',
+                    content: content.trim(),
+                    tags: tags,
+                });
 
-            setNote(updatedNote);
-            setSaveStatus('saved');
-        }, 500);
+                if (error) {
+                    setError(error);
+                    setSaveStatus('unsaved');
+                } else if (data) {
+                    setNote(mapSupabaseNote(data));
+                    setSaveStatus('saved');
+                    refreshTags(); // Update tags in sidebar
+                }
+            } else {
+                // Create new note
+                const { data, error } = await notesService.create({
+                    title: title.trim() || 'Nota Sem Título',
+                    content: content.trim(),
+                    tags: tags,
+                    is_pinned: false,
+                    is_archived: false,
+                });
+
+                if (error) {
+                    setError(error);
+                    setSaveStatus('unsaved');
+                } else if (data) {
+                    setNote(mapSupabaseNote(data));
+                    setSaveStatus('saved');
+                    refreshTags(); // Update tags in sidebar
+                    // Update URL to reflect the new note ID
+                    navigate(`/notes/${data.id}`, { replace: true });
+                }
+            }
+        } catch (err) {
+            console.error('Error saving note:', err);
+            setError('Erro ao salvar nota');
+            setSaveStatus('unsaved');
+        }
     };
 
     const handleInsertLink = () => {
@@ -318,8 +293,24 @@ Você pode misturar incorporações com texto regular e outros elementos markdow
         return result;
     };
 
+    if (isLoading) {
+        return (
+            <div className="h-screen flex items-center justify-center bg-white dark:bg-gray-900">
+                <Loader2 className="w-8 h-8 animate-spin text-teal-600" />
+            </div>
+        );
+    }
+
     return (
         <div className="h-screen flex flex-col bg-white dark:bg-gray-900">
+            {/* Error Banner */}
+            {error && (
+                <div className="bg-red-50 dark:bg-red-900/20 border-b border-red-200 dark:border-red-800 px-6 py-2 text-red-600 dark:text-red-400 text-sm flex items-center justify-between">
+                    <span>{error}</span>
+                    <button onClick={() => setError(null)} className="underline">Fechar</button>
+                </div>
+            )}
+
             {/* Header */}
             <header className="border-b border-gray-200 dark:border-gray-800 px-6 py-3 flex items-center justify-between">
                 <div className="flex items-center gap-4">
@@ -385,17 +376,15 @@ Você pode misturar incorporações com texto regular e outros elementos markdow
             {/* Tags and Info Panel */}
             <div className="border-b border-gray-200 dark:border-gray-800 px-6 py-3 bg-gray-50 dark:bg-gray-800/50">
                 <div className="flex items-center gap-4 flex-wrap">
-                    <div className="flex items-center gap-2 flex-1 min-w-[300px]">
-                        <Tag className="w-4 h-4 text-gray-500" />
-                        <input
-                            type="text"
-                            value={tags}
-                            onChange={(e) => {
-                                setTags(e.target.value);
+                    <div className="flex-1 min-w-[300px]">
+                        <TagInput
+                            tags={tags}
+                            onChange={(newTags) => {
+                                setTags(newTags);
                                 setSaveStatus('unsaved');
                             }}
-                            placeholder="Adicionar tags (separadas por vírgula)"
-                            className="flex-1 px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+                            suggestions={['planning', 'roadmap', 'development', 'meetings', 'business', 'tables', 'example', 'interactive', 'embeds', 'youtube', 'pdf', 'recipes', 'cooking', 'books', 'productivity', 'learning']}
+                            placeholder="Adicionar tag..."
                         />
                     </div>
                     {showSettings && (
@@ -415,29 +404,7 @@ Você pode misturar incorporações com texto regular e outros elementos markdow
                         </>
                     )}
                 </div>
-                {tags && (
-                    <div className="flex items-center gap-2 mt-2 flex-wrap">
-                        {tags.split(',').map(tag => tag.trim()).filter(tag => tag).map((tag, index) => (
-                            <span
-                                key={index}
-                                className="inline-flex items-center gap-1 px-2 py-1 bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 text-xs rounded-full"
-                            >
-                                {tag}
-                                <button
-                                    onClick={() => {
-                                        const tagList = tags.split(',').map(t => t.trim()).filter(t => t);
-                                        tagList.splice(index, 1);
-                                        setTags(tagList.join(', '));
-                                        setSaveStatus('unsaved');
-                                    }}
-                                    className="hover:text-teal-900 dark:hover:text-teal-100"
-                                >
-                                    ×
-                                </button>
-                            </span>
-                        ))}
-                    </div>
-                )}
+
             </div>
 
             {/* Main Content */}

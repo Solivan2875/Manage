@@ -1,59 +1,30 @@
-import { useState, useRef, useEffect } from 'react';
-import { ChevronRight, Plus, MoreHorizontal, Trash2, Edit, Check, X, XCircle } from 'lucide-react';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { ChevronRight, Plus, MoreHorizontal, Trash2, Edit, Check, X, XCircle, Loader2 } from 'lucide-react';
 import { useTag } from '../context/TagContext';
+import { useAuth } from '../context/AuthContext';
+import { jotsService, type Jot as SupabaseJot } from '../services/supabaseService';
 
 interface Jot {
     id: string;
     content: string;
-    title?: string;
     date: Date;
     tags: string[];
-    tasks?: { id: string; text: string; completed: boolean }[];
 }
 
-const initialJots: Jot[] = [
-    {
-        id: '1',
-        content: 'Seu erro foi uma intenção oculta',
-        date: new Date('2025-12-16'),
-        tags: ['philosophy'],
-    },
-    {
-        id: '2',
-        title: 'Nota Sem Título',
-        content: '',
-        date: new Date('2025-12-16'),
-        tags: [],
-    },
-    {
-        id: '3',
-        title: 'Renovação de Habilitação',
-        content: 'Hoje dei entrada no detran para a renovação da habilitação, tinha realizado o exame toxicológico em 14/11/2025 e fico liberado para que eu possa dar continuidade no processo hoje, porem o doutor vicente esta de atestado e provavelmente so retorna quinta feira dia 18/12/2025.',
-        date: new Date('2025-12-16'),
-        tags: ['detran', 'habilitacao'],
-        tasks: [
-            { id: '3-1', text: 'Fazer exames para renovar a habilitação', completed: false }
-        ]
-    },
-    {
-        id: '4',
-        title: 'Calendario',
-        content: '',
-        date: new Date('2025-12-16'),
-        tags: [],
-    },
-    {
-        id: '5',
-        title: 'Pagamento do Sr. Derneval',
-        content: 'No dia 14/11/2025 efetuei o pagamento ao senhor Derneval no valor total de R$ 249.900,00, conforme comprovantes anexados.\n\nDetalhamento dos componentes:\n• Renda anual de bezerros\n  ◦ Quantidade: 30 bezerros\n  ◦ Valor unitário: R$ 2.480,00\n  ◦ Subtotal: R$ 74.400,00\n\n• Parceria de gado\n  ◦ Base: 650 arrobas\n\nTotal pago:\nA soma dos dois componentes (R$ 175.500,00) resulta no montante total de R$ 249.900,00, que já foi integralmente quitado.\n\nObs.: Anexar os comprovantes correspondentes a cada linha de pagamento para referência futura.',
-        date: new Date('2025-12-16'),
-        tags: ['derneval', 'pagamento', 'gado'],
-    },
-];
+const mapSupabaseJot = (jot: SupabaseJot): Jot => ({
+    id: jot.id,
+    content: jot.content,
+    date: new Date(jot.created_at),
+    tags: jot.tags || [],
+});
 
 export const Jots = () => {
-    const { selectedTag, clearTagFilter } = useTag();
-    const [jots, setJots] = useState<Jot[]>(initialJots);
+    const { selectedTag, clearTagFilter, refreshTags } = useTag();
+    const { user } = useAuth();
+    const [jots, setJots] = useState<Jot[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSaving, setIsSaving] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const [isCreatingNew, setIsCreatingNew] = useState(false);
     const [newJotContent, setNewJotContent] = useState('');
     const [editingJotId, setEditingJotId] = useState<string | null>(null);
@@ -61,29 +32,79 @@ export const Jots = () => {
     const [showOptions, setShowOptions] = useState<string | null>(null);
     const newJotRef = useRef<HTMLTextAreaElement>(null);
 
+    // Load jots from Supabase
+    const loadJots = useCallback(async () => {
+        if (!user) return;
+
+        setIsLoading(true);
+        setError(null);
+
+        try {
+            const { data, error } = await jotsService.getAll();
+            if (error) {
+                setError(error);
+            } else if (data) {
+                setJots(data.map(mapSupabaseJot));
+            }
+        } catch (err) {
+            console.error('Error loading jots:', err);
+            setError('Erro ao carregar anotações');
+        } finally {
+            setIsLoading(false);
+        }
+    }, [user]);
+
+    useEffect(() => {
+        loadJots();
+    }, [loadJots]);
+
     useEffect(() => {
         if (isCreatingNew && newJotRef.current) {
             newJotRef.current.focus();
         }
     }, [isCreatingNew]);
 
-    const createNewJot = () => {
-        if (newJotContent.trim()) {
-            const newJot: Jot = {
-                id: Date.now().toString(),
-                content: newJotContent,
-                date: new Date(),
+    const createNewJot = async () => {
+        if (!newJotContent.trim()) return;
+
+        setIsSaving(true);
+        try {
+            const { data, error } = await jotsService.create({
+                content: newJotContent.trim(),
                 tags: [],
-            };
-            setJots([newJot, ...jots]);
-            setNewJotContent('');
-            setIsCreatingNew(false);
+            });
+
+            if (error) {
+                setError(error);
+            } else if (data) {
+                setJots([mapSupabaseJot(data), ...jots]);
+                setNewJotContent('');
+                setIsCreatingNew(false);
+                refreshTags(); // Update tags in sidebar
+            }
+        } catch (err) {
+            console.error('Error creating jot:', err);
+            setError('Erro ao criar anotação');
+        } finally {
+            setIsSaving(false);
         }
     };
 
-    const deleteJot = (id: string) => {
-        setJots(jots.filter(jot => jot.id !== id));
+    const deleteJot = async (id: string) => {
         setShowOptions(null);
+
+        try {
+            const { success, error } = await jotsService.delete(id);
+            if (error) {
+                setError(error);
+            } else if (success) {
+                setJots(jots.filter(jot => jot.id !== id));
+                refreshTags(); // Update tags in sidebar
+            }
+        } catch (err) {
+            console.error('Error deleting jot:', err);
+            setError('Erro ao excluir anotação');
+        }
     };
 
     const startEditing = (jot: Jot) => {
@@ -92,37 +113,37 @@ export const Jots = () => {
         setShowOptions(null);
     };
 
-    const saveEdit = () => {
-        if (editingJotId && editingContent.trim()) {
-            setJots(jots.map(jot =>
-                jot.id === editingJotId
-                    ? { ...jot, content: editingContent }
-                    : jot
-            ));
-            setEditingJotId(null);
-            setEditingContent('');
+    const saveEdit = async () => {
+        if (!editingJotId || !editingContent.trim()) return;
+
+        setIsSaving(true);
+        try {
+            const { data, error } = await jotsService.update(editingJotId, {
+                content: editingContent.trim(),
+            });
+
+            if (error) {
+                setError(error);
+            } else if (data) {
+                setJots(jots.map(jot =>
+                    jot.id === editingJotId
+                        ? mapSupabaseJot(data)
+                        : jot
+                ));
+                setEditingJotId(null);
+                setEditingContent('');
+            }
+        } catch (err) {
+            console.error('Error updating jot:', err);
+            setError('Erro ao atualizar anotação');
+        } finally {
+            setIsSaving(false);
         }
     };
 
     const cancelEdit = () => {
         setEditingJotId(null);
         setEditingContent('');
-    };
-
-    const toggleTask = (jotId: string, taskId: string) => {
-        setJots(jots.map(jot => {
-            if (jot.id === jotId && jot.tasks) {
-                return {
-                    ...jot,
-                    tasks: jot.tasks.map(task =>
-                        task.id === taskId
-                            ? { ...task, completed: !task.completed }
-                            : task
-                    )
-                };
-            }
-            return jot;
-        }));
     };
 
     const groupJotsByDate = (jotsToGroup: Jot[]) => {
@@ -159,10 +180,6 @@ export const Jots = () => {
                 <div className="flex items-start gap-1">
                     <ChevronRight className="w-4 h-4 text-gray-300 dark:text-gray-600 mt-1 opacity-0 group-hover:opacity-100 transition-opacity" />
                     <div className="w-full">
-                        {jot.title && (
-                            <h3 className="text-xl font-medium text-gray-800 dark:text-gray-200 mb-3">{jot.title}</h3>
-                        )}
-
                         {isEditing ? (
                             <div className="mb-3">
                                 <textarea
@@ -174,10 +191,11 @@ export const Jots = () => {
                                 <div className="flex gap-2 mt-2">
                                     <button
                                         onClick={saveEdit}
-                                        className="p-1.5 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors"
+                                        disabled={isSaving}
+                                        className="p-1.5 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors disabled:opacity-50"
                                         title="Salvar"
                                     >
-                                        <Check className="w-4 h-4" />
+                                        {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
                                     </button>
                                     <button
                                         onClick={cancelEdit}
@@ -227,31 +245,15 @@ export const Jots = () => {
                             </div>
                         )}
 
-                        {jot.tasks && jot.tasks.length > 0 && (
-                            <div className="space-y-2 mt-4">
-                                {jot.tasks.map(task => (
-                                    <div
-                                        key={task.id}
-                                        className="bg-gray-50 dark:bg-gray-800 rounded border border-gray-100 dark:border-gray-700 p-3 flex items-center justify-between group/task cursor-pointer hover:bg-white dark:hover:bg-gray-700 hover:shadow-sm hover:border-gray-200 dark:hover:border-gray-600 transition-all"
-                                        onClick={() => toggleTask(jot.id, task.id)}
+                        {jot.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mt-2">
+                                {jot.tags.map(tag => (
+                                    <span
+                                        key={tag}
+                                        className="text-xs px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded"
                                     >
-                                        <div className="flex items-center gap-3">
-                                            <div className={`w-4 h-4 border-2 rounded flex items-center justify-center transition-colors ${task.completed
-                                                ? 'bg-teal-600 border-teal-600'
-                                                : 'border-gray-300 dark:border-gray-600 hover:border-teal-500 dark:hover:border-teal-400'
-                                                }`}>
-                                                {task.completed && (
-                                                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                                    </svg>
-                                                )}
-                                            </div>
-                                            <span className={`text-gray-700 dark:text-gray-300 font-medium text-sm ${task.completed ? 'line-through opacity-60' : ''
-                                                }`}>
-                                                {task.text}
-                                            </span>
-                                        </div>
-                                    </div>
+                                        {tag}
+                                    </span>
                                 ))}
                             </div>
                         )}
@@ -260,6 +262,14 @@ export const Jots = () => {
             </div>
         );
     };
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <Loader2 className="w-8 h-8 animate-spin text-teal-600" />
+            </div>
+        );
+    }
 
     return (
         <div className="max-w-3xl mx-auto py-12 px-6 dark:bg-gray-900">
@@ -287,6 +297,13 @@ export const Jots = () => {
                 </button>
             </header>
 
+            {error && (
+                <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md text-red-600 dark:text-red-400 text-sm">
+                    {error}
+                    <button onClick={() => setError(null)} className="ml-2 underline">Fechar</button>
+                </div>
+            )}
+
             <div className="space-y-16 animate-slide-up">
                 {isCreatingNew && (
                     <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-6">
@@ -310,8 +327,10 @@ export const Jots = () => {
                             </button>
                             <button
                                 onClick={createNewJot}
-                                className="px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white rounded-md transition-colors"
+                                disabled={isSaving || !newJotContent.trim()}
+                                className="px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white rounded-md transition-colors disabled:opacity-50 flex items-center gap-2"
                             >
+                                {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
                                 Salvar
                             </button>
                         </div>

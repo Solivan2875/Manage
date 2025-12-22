@@ -1,9 +1,7 @@
-import { NavLink } from 'react-router-dom';
-import { PenSquare, FileText, CheckCircle2, CalendarDays, Settings, ChevronDown, ListFilter, Plus, Moon, Sun, LogOut, User, X } from 'lucide-react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { PenSquare, FileText, CheckCircle2, CalendarDays, Settings, ListFilter, Plus, X, RefreshCw, Loader2 } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { useTheme } from '../context/ThemeContext';
 import { useTag } from '../context/TagContext';
-import { useState, useRef, useEffect } from 'react';
 
 const SidebarItem = ({ to, icon: Icon, label, count, onClick }: { to?: string, icon: any, label: string, count?: number, onClick?: () => void }) => {
     if (to) {
@@ -14,7 +12,7 @@ const SidebarItem = ({ to, icon: Icon, label, count, onClick }: { to?: string, i
                     cn(
                         "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors mb-1",
                         isActive
-                            ? "bg-teal-50 text-teal-700"
+                            ? "bg-teal-50 text-teal-700 dark:bg-teal-900/20 dark:text-teal-400"
                             : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
                     )
                 }
@@ -42,91 +40,40 @@ const SidebarItem = ({ to, icon: Icon, label, count, onClick }: { to?: string, i
     );
 };
 
-const UserDropdown = () => {
-    const [isOpen, setIsOpen] = useState(false);
-    const dropdownRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-                setIsOpen(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
-
-    return (
-        <div className="relative" ref={dropdownRef}>
-            <div
-                onClick={() => setIsOpen(!isOpen)}
-                className='flex items-center gap-2 px-2 py-3 mb-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer transition-colors'
-            >
-                <div className='w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900 border border-indigo-200 dark:border-indigo-700 flex items-center justify-center text-indigo-700 dark:text-indigo-300 font-bold'>
-                    SX
-                </div>
-                <div className='flex-1 overflow-hidden'>
-                    <p className='text-sm font-medium text-gray-800 dark:text-gray-200 truncate'>Solivan Xavier</p>
-                </div>
-                <ChevronDown className={`w-4 h-4 text-gray-400 dark:text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-            </div>
-
-            {isOpen && (
-                <div className="absolute left-0 right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-20 overflow-hidden">
-                    <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
-                        <User className="w-4 h-4" />
-                        Perfil
-                    </button>
-                    <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
-                        <Settings className="w-4 h-4" />
-                        Configurações
-                    </button>
-                    <div className="border-t border-gray-100 dark:border-gray-700">
-                        <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700">
-                            <LogOut className="w-4 h-4" />
-                            Sair
-                        </button>
-                    </div>
-                </div>
-            )}
-        </div>
-    )
-}
 
 export const Sidebar = () => {
-    const { theme, toggleTheme } = useTheme();
-    const { selectedTag, setSelectedTag } = useTag();
-    const [shortcuts, setShortcuts] = useState<string[]>([]);
-    const [isAddingShortcut, setIsAddingShortcut] = useState(false);
-    const [newShortcut, setNewShortcut] = useState('');
+    const navigate = useNavigate();
+    const { selectedTag, setSelectedTag, clearTagFilter, tags, isLoadingTags, refreshTags } = useTag();
 
-    // Mock tag counts - in a real app, this would come from a store or API
-    const tagCounts: Record<string, number> = {
-        'daily-jots': 5,
-        'derneval': 1,
-        'detran': 1,
-        'gado': 1,
-        'habilitacao': 1,
-        'pagamento': 1,
-    };
-
-    const addShortcut = () => {
-        if (newShortcut.trim() && !shortcuts.includes(newShortcut.trim())) {
-            setShortcuts([...shortcuts, newShortcut.trim()]);
-            setNewShortcut('');
-            setIsAddingShortcut(false);
+    const handleTagClick = (tag: string) => {
+        if (selectedTag === tag) {
+            clearTagFilter();
+        } else {
+            setSelectedTag(tag);
+            // Navigate to notes page when a tag is selected
+            navigate('/notes');
         }
     };
 
-    const removeShortcut = (shortcut: string) => {
-        setShortcuts(shortcuts.filter(s => s !== shortcut));
-    };
-
-    const handleTagClick = (tag: string) => {
-        setSelectedTag(selectedTag === tag ? null : tag);
+    // Get color for tag based on its sources
+    // Get color for tag based on its sources
+    const getTagColor = (sources: ('notes' | 'jots' | 'tasks' | 'events')[]) => {
+        if (sources.length > 1) {
+            return 'bg-purple-400 dark:bg-purple-500';
+        }
+        if (sources.includes('notes')) {
+            return 'bg-blue-400 dark:bg-blue-500';
+        }
+        if (sources.includes('jots')) {
+            return 'bg-green-400 dark:bg-green-500';
+        }
+        if (sources.includes('tasks')) {
+            return 'bg-orange-400 dark:bg-orange-500';
+        }
+        if (sources.includes('events')) {
+            return 'bg-red-400 dark:bg-red-500';
+        }
+        return 'bg-gray-400 dark:bg-gray-500';
     };
 
     return (
@@ -140,8 +87,6 @@ export const Sidebar = () => {
                 <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Seu espaço de trabalho inteligente</p>
             </div>
 
-            <UserDropdown />
-
             <div className="mb-6">
                 <SidebarItem to="/jots" icon={PenSquare} label="Rascunhos" />
                 <SidebarItem to="/notes" icon={FileText} label="Notas" />
@@ -151,92 +96,122 @@ export const Sidebar = () => {
 
             <div className="mb-6">
                 <div className='flex items-center justify-between px-3 mb-2 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider'>
-                    <span>Atalhos</span>
-                    {!isAddingShortcut ? (
-                        <Plus
-                            onClick={() => setIsAddingShortcut(true)}
-                            className='w-4 h-4 cursor-pointer hover:text-gray-600 dark:hover:text-gray-400'
-                        />
-                    ) : (
-                        <X
-                            onClick={() => {
-                                setIsAddingShortcut(false);
-                                setNewShortcut('');
-                            }}
-                            className='w-4 h-4 cursor-pointer hover:text-gray-600 dark:hover:text-gray-400'
-                        />
-                    )}
+                    <span>Ações Rápidas</span>
                 </div>
 
-                {isAddingShortcut && (
-                    <div className="px-3 py-2">
-                        <div className="flex gap-2">
-                            <input
-                                type="text"
-                                value={newShortcut}
-                                onChange={(e) => setNewShortcut(e.target.value)}
-                                placeholder="Nome do atalho"
-                                className="flex-1 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-teal-500"
-                                autoFocus
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                        addShortcut();
-                                    } else if (e.key === 'Escape') {
-                                        setIsAddingShortcut(false);
-                                        setNewShortcut('');
-                                    }
-                                }}
-                            />
-                            <button
-                                onClick={addShortcut}
-                                className="px-2 py-1 text-xs bg-teal-600 text-white rounded hover:bg-teal-700"
-                            >
-                                Adicionar
-                            </button>
+                {/* Quick Action Buttons */}
+                <div className="space-y-1 px-2">
+                    <button
+                        onClick={() => navigate('/notes')}
+                        className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-teal-50 dark:hover:bg-teal-900/20 rounded-lg transition-all hover:shadow-sm group"
+                        title="Criar nova nota"
+                    >
+                        <div className="p-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-md group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50 transition-colors">
+                            <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                         </div>
-                    </div>
-                )}
+                        <span className="flex-1 text-left font-medium">Nova Nota</span>
+                        <Plus className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </button>
 
-                {shortcuts.length === 0 && !isAddingShortcut && (
-                    <div className="px-3 py-2 text-sm text-gray-500 dark:text-gray-600 italic">Nenhum atalho ainda</div>
-                )}
-
-                {shortcuts.map(shortcut => (
-                    <div key={shortcut} className="px-3 py-1.5">
-                        <div className="flex items-center justify-between group">
-                            <span className="text-sm text-gray-600 dark:text-gray-400">{shortcut}</span>
-                            <button
-                                onClick={() => removeShortcut(shortcut)}
-                                className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-500"
-                            >
-                                <X className="w-3 h-3" />
-                            </button>
+                    <button
+                        onClick={() => navigate('/tasks')}
+                        className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-teal-50 dark:hover:bg-teal-900/20 rounded-lg transition-all hover:shadow-sm group"
+                        title="Criar nova tarefa"
+                    >
+                        <div className="p-1.5 bg-orange-100 dark:bg-orange-900/30 rounded-md group-hover:bg-orange-200 dark:group-hover:bg-orange-900/50 transition-colors">
+                            <CheckCircle2 className="w-4 h-4 text-orange-600 dark:text-orange-400" />
                         </div>
-                    </div>
-                ))}
+                        <span className="flex-1 text-left font-medium">Nova Tarefa</span>
+                        <Plus className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </button>
+
+                    <button
+                        onClick={() => navigate('/calendar')}
+                        className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-teal-50 dark:hover:bg-teal-900/20 rounded-lg transition-all hover:shadow-sm group"
+                        title="Criar novo evento"
+                    >
+                        <div className="p-1.5 bg-red-100 dark:bg-red-900/30 rounded-md group-hover:bg-red-200 dark:group-hover:bg-red-900/50 transition-colors">
+                            <CalendarDays className="w-4 h-4 text-red-600 dark:text-red-400" />
+                        </div>
+                        <span className="flex-1 text-left font-medium">Novo Evento</span>
+                        <Plus className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </button>
+
+                    <button
+                        onClick={() => navigate('/jots')}
+                        className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-teal-50 dark:hover:bg-teal-900/20 rounded-lg transition-all hover:shadow-sm group"
+                        title="Criar novo rascunho"
+                    >
+                        <div className="p-1.5 bg-green-100 dark:bg-green-900/30 rounded-md group-hover:bg-green-200 dark:group-hover:bg-green-900/50 transition-colors">
+                            <PenSquare className="w-4 h-4 text-green-600 dark:text-green-400" />
+                        </div>
+                        <span className="flex-1 text-left font-medium">Novo Rascunho</span>
+                        <Plus className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </button>
+                </div>
             </div>
 
             <div className="flex-1">
                 <div className='flex items-center justify-between px-3 mb-2 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider'>
                     <span>Tags</span>
-                    <ListFilter className='w-4 h-4 cursor-pointer hover:text-gray-600 dark:hover:text-gray-400' />
+                    <div className="flex items-center gap-2">
+                        {selectedTag && (
+                            <button
+                                onClick={clearTagFilter}
+                                className="text-teal-500 hover:text-teal-600 transition-colors"
+                                title="Limpar filtro"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                        )}
+                        <button
+                            onClick={refreshTags}
+                            disabled={isLoadingTags}
+                            className="hover:text-gray-600 dark:hover:text-gray-400 transition-colors disabled:opacity-50"
+                            title="Atualizar tags"
+                        >
+                            {isLoadingTags ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                                <RefreshCw className="w-4 h-4" />
+                            )}
+                        </button>
+                        <ListFilter className='w-4 h-4 cursor-pointer hover:text-gray-600 dark:hover:text-gray-400' />
+                    </div>
                 </div>
+
+                {/* Loading state */}
+                {isLoadingTags && tags.length === 0 && (
+                    <div className="px-3 py-2 text-sm text-gray-500 dark:text-gray-600 flex items-center gap-2">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Carregando tags...
+                    </div>
+                )}
+
+                {/* Empty state */}
+                {!isLoadingTags && tags.length === 0 && (
+                    <div className="px-3 py-2 text-sm text-gray-500 dark:text-gray-600 italic">
+                        Nenhuma tag encontrada
+                    </div>
+                )}
+
+                {/* Tags list */}
                 <div className='space-y-1'>
-                    {Object.entries(tagCounts).map(([tag, count]) => (
+                    {tags.map(({ name, count, sources }) => (
                         <div
-                            key={tag}
-                            onClick={() => handleTagClick(tag)}
-                            className={`flex items-center gap-2 px-3 py-1.5 text-sm rounded-md cursor-pointer group transition-colors ${selectedTag === tag
-                                ? 'bg-teal-50 text-teal-700 dark:bg-teal-900/20'
+                            key={name}
+                            onClick={() => handleTagClick(name)}
+                            className={`flex items-center gap-2 px-3 py-1.5 text-sm rounded-md cursor-pointer group transition-colors ${selectedTag === name
+                                ? 'bg-teal-50 text-teal-700 dark:bg-teal-900/20 dark:text-teal-400'
                                 : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
                                 }`}
                         >
-                            <div className={`w-2 h-2 rounded-sm ${selectedTag === tag
+                            <div className={`w-2 h-2 rounded-sm ${selectedTag === name
                                 ? 'bg-teal-500'
-                                : 'bg-blue-400 dark:bg-blue-500 opacity-50 group-hover:opacity-100'
+                                : `${getTagColor(sources)} opacity-50 group-hover:opacity-100`
                                 }`}></div>
-                            <span>{tag}</span>
-                            <span className={`ml-auto text-xs ${selectedTag === tag
+                            <span className="flex-1 truncate" title={name}>{name}</span>
+                            <span className={`ml-auto text-xs ${selectedTag === name
                                 ? 'text-teal-600 dark:text-teal-400'
                                 : 'text-gray-300 dark:text-gray-600'
                                 }`}>{count}</span>
@@ -246,23 +221,7 @@ export const Sidebar = () => {
             </div>
 
             <div className="mt-auto pt-4 border-t border-gray-100 dark:border-gray-800">
-                <button
-                    onClick={toggleTheme}
-                    className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors"
-                >
-                    {theme === 'light' ? (
-                        <>
-                            <Moon className="w-5 h-5" />
-                            <span>Modo escuro</span>
-                        </>
-                    ) : (
-                        <>
-                            <Sun className="w-5 h-5" />
-                            <span>Modo claro</span>
-                        </>
-                    )}
-                </button>
-                <SidebarItem icon={Settings} label="Configurações" />
+                <SidebarItem to="/settings/profile" icon={Settings} label="Configurações" />
             </div>
         </div>
     );

@@ -1,560 +1,652 @@
-import { useState, useRef, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Clock, MapPin, Users, Plus, Edit, Trash2, MoreHorizontal } from 'lucide-react';
-
-interface Event {
-    id: string;
-    title: string;
-    date: Date;
-    startTime: string;
-    endTime: string;
-    type: 'meeting' | 'task' | 'reminder' | 'event';
-    location?: string;
-    attendees?: string[];
-    color: string;
-}
-
-const mockEvents: Event[] = [
-    {
-        id: '1',
-        title: 'Reunião de equipe',
-        date: new Date('2025-12-16'),
-        startTime: '09:00',
-        endTime: '09:30',
-        type: 'meeting',
-        location: 'Virtual',
-        attendees: ['John', 'Sarah', 'Mike'],
-        color: 'bg-blue-500',
-    },
-    {
-        id: '2',
-        title: 'Prazo: Lançamento do MaxNote',
-        date: new Date('2025-12-18'),
-        startTime: '17:00',
-        endTime: '17:00',
-        type: 'task',
-        color: 'bg-red-500',
-    },
-    {
-        id: '3',
-        title: 'Consulta médica',
-        date: new Date('2025-12-18'),
-        startTime: '14:00',
-        endTime: '15:00',
-        type: 'reminder',
-        location: 'Medical Center',
-        color: 'bg-purple-500',
-    },
-    {
-        id: '4',
-        title: 'Demonstração do produto',
-        date: new Date('2025-12-20'),
-        startTime: '15:00',
-        endTime: '16:00',
-        type: 'meeting',
-        attendees: ['Clients', 'Sales team'],
-        color: 'bg-green-500',
-    },
-];
+import { useState, useEffect, useMemo, useRef } from 'react';
+import { Plus, Calendar as CalendarIcon, Settings, History, Download, Upload, BarChart3, Activity, Wifi, WifiOff } from 'lucide-react';
+import { useCalendarEvents } from '../hooks/calendar/useCalendarEvents';
+import { useCalendarState } from '../hooks/calendar/useCalendarState';
+import { useEventModal } from '../hooks/calendar/useEventModal';
+import { useNotifications } from '../hooks/calendar/useNotifications';
+import { useModuleIntegration } from '../hooks/calendar/useModuleIntegration';
+import { useOfflineSync } from '../hooks/calendar/useOfflineSync';
+import { useAuditHistory } from '../hooks/calendar/useAuditHistory';
+import { useRecurrence } from '../hooks/calendar/useRecurrence';
+import { useCalendarImportExport } from '../hooks/calendar/useCalendarImportExport';
+import { usePerformance } from '../hooks/calendar/usePerformance';
+import { useTag } from '../context/TagContext';
+import { CalendarHeader } from '../components/calendar/components/CalendarHeader';
+import { EventModal } from '../components/calendar/components/EventModal';
+import { EventItem } from '../components/calendar/components/EventItem';
+import { MonthView } from '../components/calendar/components/views/MonthView';
+import { WeekView } from '../components/calendar/components/views/WeekView';
+import { DayView } from '../components/calendar/components/views/DayView';
+import { NotificationPanel } from '../components/calendar/components/NotificationPanel';
+import { SearchFilter } from '../components/calendar/components/SearchFilter';
+import { ConflictDetector } from '../components/calendar/components/ConflictDetector';
+import { IntegrationPanel } from '../components/calendar/components/IntegrationPanel';
+import { SyncStatusIndicator } from '../components/calendar/components/SyncStatusIndicator';
+import { HistoryPanel } from '../components/calendar/components/HistoryPanel';
+import { RecurrenceEditor } from '../components/calendar/components/RecurrenceEditor';
+import { ImportExportPanel } from '../components/calendar/components/ImportExportPanel';
+import { AnalyticsPanel } from '../components/calendar/components/AnalyticsPanel';
+import { getUpcomingEvents, searchEvents, filterEventsByTags, getEventsByCategory, getEventsByPriority } from '../components/calendar/utils/eventHelpers';
+import type { EventFormData, Event, EventFilter } from '../types/calendar';
 
 export const Calendar = () => {
-    const [events, setEvents] = useState<Event[]>(mockEvents);
-    const [currentDate, setCurrentDate] = useState(new Date());
-    const [view, setView] = useState<'month' | 'week' | 'day'>('month');
-    const [isCreatingNew, setIsCreatingNew] = useState(false);
-    const [newEventTitle, setNewEventTitle] = useState('');
-    const [newEventDate, setNewEventDate] = useState('');
-    const [newEventStartTime, setNewEventStartTime] = useState('');
-    const [newEventEndTime, setNewEventEndTime] = useState('');
-    const [newEventType, setNewEventType] = useState<'meeting' | 'task' | 'reminder' | 'event'>('event');
-    const [newEventLocation, setNewEventLocation] = useState('');
-    const [newEventAttendees, setNewEventAttendees] = useState('');
-    const [newEventColor, setNewEventColor] = useState('bg-blue-500');
-    const [editingEventId, setEditingEventId] = useState<string | null>(null);
-    const [editingTitle, setEditingTitle] = useState('');
-    const [editingDate, setEditingDate] = useState('');
-    const [editingStartTime, setEditingStartTime] = useState('');
-    const [editingEndTime, setEditingEndTime] = useState('');
-    const [editingType, setEditingType] = useState<'meeting' | 'task' | 'reminder' | 'event'>('event');
-    const [editingLocation, setEditingLocation] = useState('');
-    const [editingAttendees, setEditingAttendees] = useState('');
-    const [editingColor, setEditingColor] = useState('bg-blue-500');
-    const [showOptions, setShowOptions] = useState<string | null>(null);
-    const newEventRef = useRef<HTMLInputElement>(null);
+    // State for search and filters
+    const [searchQuery, setSearchQuery] = useState('');
+    const [activeFilters, setActiveFilters] = useState<EventFilter[]>([]);
 
+    // State for advanced panels
+    const [showIntegrationPanel, setShowIntegrationPanel] = useState(false);
+    const [showHistoryPanel, setShowHistoryPanel] = useState(false);
+    const [showImportExportPanel, setShowImportExportPanel] = useState(false);
+    const [showAnalyticsPanel, setShowAnalyticsPanel] = useState(false);
+    const [showRecurrenceEditor, setShowRecurrenceEditor] = useState(false);
+    const [selectedEventForHistory, setSelectedEventForHistory] = useState<Event | null>(null);
+    const [selectedEventForRecurrence, setSelectedEventForRecurrence] = useState<Event | null>(null);
+
+    // Refs for accessibility
+    const calendarRef = useRef<HTMLDivElement>(null);
+
+    // Custom hooks
+    const { events, loading, addEventFromForm, updateEvent, deleteEvent } = useCalendarEvents();
+    const {
+        currentDate,
+        currentView,
+        selectedDate,
+        navigateToPrevious,
+        navigateToNext,
+        navigateToToday,
+        setView,
+        selectDate,
+        getNavigationLabel
+    } = useCalendarState();
+
+    // Fase 3 hooks - simplified implementation
+    const moduleIntegration = useModuleIntegration({ events });
+    const offlineSync = useOfflineSync({ events });
+    const auditHistory = useAuditHistory({ events });
+    const recurrence = useRecurrence({ events });
+    const calendarImportExport = useCalendarImportExport({ events });
+    const performance = usePerformance({ events });
+
+    // Tag context
+    const { refreshTags } = useTag();
+
+    const {
+        isOpen: isModalOpen,
+        isEditing,
+        editingEventId,
+        formData,
+        titleInputRef,
+        openModal,
+        openEditModal,
+        closeModal,
+        handleSave,
+        handleDelete,
+        handleCancel,
+        handleDuplicate,
+        setTitle,
+        setDescription,
+        setStartDate,
+        setEndDate,
+        setIsAllDay,
+        setCategory,
+        setPriority,
+        setLocation,
+        setAttendees,
+        setColor,
+        setTags,
+        setReminders,
+        setRecurrence
+    } = useEventModal({
+        onCreateEvent: async (formData) => {
+            const newEvent = await addEventFromForm(formData);
+            if (newEvent) {
+                // Determine source for audit log
+                // const source = formData.tags.some(t => t.toLowerCase() === 'google') ? 'google_calendar' :
+                //    formData.tags.some(t => t.toLowerCase() === 'outlook') ? 'outlook_calendar' : 'local';
+
+                // logAction('create', 'event', `Evento criado: ${formData.title}`, { source });
+                refreshTags();
+            }
+        },
+        onDeleteEvent: async (id) => {
+            await deleteEvent(id);
+            refreshTags();
+        },
+        onUpdateEvent: async (id: string, formData: EventFormData) => {
+            // Convert EventFormData to partial Event for update
+            const attendees = formData.attendees
+                .split(',')
+                .map(name => name.trim())
+                .filter(name => name)
+                .map((name, index) => ({
+                    id: `attendee_${Date.now()}_${index}`,
+                    name,
+                    confirmed: false
+                }));
+
+            await updateEvent(id, {
+                title: formData.title,
+                description: formData.description,
+                startDate: formData.startDate,
+                endDate: formData.endDate,
+                isAllDay: formData.isAllDay,
+                category: formData.category,
+                priority: formData.priority,
+                location: formData.location || '',
+                attendees,
+                tags: formData.tags,
+                reminders: formData.reminders,
+                recurrence: formData.recurrence,
+                color: formData.color
+            });
+            refreshTags();
+        },
+        onDuplicateEvent: async (event: Event) => {
+            await addEventFromForm({
+                title: event.title,
+                description: event.description || '',
+                startDate: event.startDate,
+                endDate: event.endDate,
+                isAllDay: event.isAllDay,
+                category: event.category,
+                priority: event.priority,
+                location: event.location || '',
+                attendees: event.attendees.map(a => a.name).join(', '),
+                reminders: event.reminders,
+                tags: event.tags,
+                color: event.color
+            });
+            refreshTags();
+        }
+    });
+
+    const {
+        notifications,
+        settings,
+        permission,
+        unreadCount,
+        createNotification,
+        markAsRead,
+        markAllAsRead,
+        removeNotification,
+        clearAllNotifications,
+        updateSettings,
+        requestBrowserPermission,
+        checkUpcomingEvents
+    } = useNotifications();
+
+    // Check for upcoming events periodically
     useEffect(() => {
-        if (isCreatingNew && newEventRef.current) {
-            newEventRef.current.focus();
+        const interval = setInterval(() => {
+            checkUpcomingEvents(events);
+        }, 60000); // Check every minute
+
+        return () => clearInterval(interval);
+    }, [events, checkUpcomingEvents]);
+
+    // Initial check for upcoming events
+    useEffect(() => {
+        checkUpcomingEvents(events);
+    }, [events, checkUpcomingEvents]);
+
+    // Fase 3: Add audit logging for event operations
+    const handleEventOperation = (operation: 'create' | 'update' | 'delete', eventData: Partial<Event>) => {
+        auditHistory.logCreate(eventData as Event);
+    };
+
+    // Enhanced event handlers with audit logging
+    const handleSaveEvent = (formData: EventFormData) => {
+        handleEventOperation('create', { title: formData.title, category: formData.category });
+        handleSave();
+    };
+
+    const handleUpdateEvent = (id: string, formData: EventFormData) => {
+        handleEventOperation('update', { id, title: formData.title, category: formData.category });
+        handleSave();
+    };
+
+    const handleDeleteEvent = (id: string) => {
+        const event = events.find(e => e.id === id);
+        if (event) {
+            handleEventOperation('delete', { id, title: event.title, category: event.category });
         }
-    }, [isCreatingNew]);
+        handleDelete();
+    };
 
-    const createNewEvent = () => {
-        if (newEventTitle.trim() && newEventDate) {
-            const newEvent: Event = {
-                id: Date.now().toString(),
-                title: newEventTitle.trim(),
-                date: new Date(newEventDate),
-                startTime: newEventStartTime,
-                endTime: newEventEndTime,
-                type: newEventType,
-                location: newEventLocation.trim(),
-                attendees: newEventAttendees.split(',').map(a => a.trim()).filter(a => a),
-                color: newEventColor,
-            };
-            setEvents([...events, newEvent]);
-            setNewEventTitle('');
-            setNewEventDate('');
-            setNewEventStartTime('');
-            setNewEventEndTime('');
-            setNewEventType('event');
-            setNewEventLocation('');
-            setNewEventAttendees('');
-            setNewEventColor('bg-blue-500');
-            setIsCreatingNew(false);
+    // Keyboard navigation
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch (e.key) {
+                    case 'n':
+                        e.preventDefault();
+                        openModal(selectedDate || new Date());
+                        break;
+                    case 'd':
+                        e.preventDefault();
+                        navigateToToday();
+                        break;
+                    case 'w':
+                        e.preventDefault();
+                        setView('week');
+                        break;
+                    case 'm':
+                        e.preventDefault();
+                        setView('month');
+                        break;
+                    case 's':
+                        e.preventDefault();
+                        document.getElementById('calendar-search-input')?.focus();
+                        break;
+                }
+            } else if (e.key === 'Escape') {
+                if (isModalOpen) {
+                    handleCancel();
+                } else if (showIntegrationPanel) {
+                    setShowIntegrationPanel(false);
+                } else if (showHistoryPanel) {
+                    setShowHistoryPanel(false);
+                } else if (showImportExportPanel) {
+                    setShowImportExportPanel(false);
+                } else if (showAnalyticsPanel) {
+                    setShowAnalyticsPanel(false);
+                } else if (showRecurrenceEditor) {
+                    setShowRecurrenceEditor(false);
+                }
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, [isModalOpen, showIntegrationPanel, showHistoryPanel, showImportExportPanel, showAnalyticsPanel, showRecurrenceEditor, selectedDate, openModal, handleCancel, navigateToToday, setView]);
+
+    // Auto-sync when online
+    useEffect(() => {
+        if (!offlineSync.isOfflineMode && offlineSync.syncQueue.length > 0) {
+            // Sync functionality will be implemented when hooks are fully integrated
+            console.log('Auto-sync triggered');
         }
+    }, [offlineSync.isOfflineMode, offlineSync.syncQueue.length]);
+
+    const handleDateClick = (date: Date) => {
+        selectDate(date);
+        openModal(date);
     };
 
-    const deleteEvent = (id: string) => {
-        setEvents(events.filter(event => event.id !== id));
-        setShowOptions(null);
+    const handleEventClick = (event: Event) => {
+        openEditModal(event);
     };
 
-    const startEditing = (event: Event) => {
-        setEditingEventId(event.id);
-        setEditingTitle(event.title);
-        setEditingDate(event.date.toISOString().split('T')[0]);
-        setEditingStartTime(event.startTime);
-        setEditingEndTime(event.endTime);
-        setEditingType(event.type);
-        setEditingLocation(event.location || '');
-        setEditingAttendees(event.attendees ? event.attendees.join(', ') : '');
-        setEditingColor(event.color);
-        setShowOptions(null);
+    const handleEventEdit = (event: Event) => {
+        openEditModal(event);
     };
 
-    const saveEdit = () => {
-        if (editingEventId && editingTitle.trim() && editingDate) {
-            setEvents(events.map(event =>
-                event.id === editingEventId
-                    ? {
-                        ...event,
-                        title: editingTitle.trim(),
-                        date: new Date(editingDate),
-                        startTime: editingStartTime,
-                        endTime: editingEndTime,
-                        type: editingType,
-                        location: editingLocation.trim(),
-                        attendees: editingAttendees.split(',').map(a => a.trim()).filter(a => a),
-                        color: editingColor
-                    }
-                    : event
-            ));
-            setEditingEventId(null);
-            setEditingTitle('');
-            setEditingDate('');
-            setEditingStartTime('');
-            setEditingEndTime('');
-            setEditingType('event');
-            setEditingLocation('');
-            setEditingAttendees('');
-            setEditingColor('bg-blue-500');
-        }
+    const handleEventDrop = (eventId: string, newDate: Date, newTime?: string) => {
+        const event = events.find(e => e.id === eventId);
+        if (!event) return;
+
+        const duration = event.endDate.getTime() - event.startDate.getTime();
+        const newEndDate = new Date(newDate.getTime() + duration);
+
+        updateEvent(eventId, {
+            startDate: newDate,
+            endDate: newEndDate
+        });
     };
 
-    const cancelEdit = () => {
-        setEditingEventId(null);
-        setEditingTitle('');
-        setEditingDate('');
-        setEditingStartTime('');
-        setEditingEndTime('');
-        setEditingType('event');
-        setEditingLocation('');
-        setEditingAttendees('');
-        setEditingColor('bg-blue-500');
+    const handleEventResize = (eventId: string, newEndDate: Date) => {
+        updateEvent(eventId, {
+            endDate: newEndDate
+        });
     };
 
-    const getDaysInMonth = (date: Date) => {
-        const year = date.getFullYear();
-        const month = date.getMonth();
-        const firstDay = new Date(year, month, 1);
-        const lastDay = new Date(year, month + 1, 0);
-        const daysInMonth = lastDay.getDate();
-        const startingDayOfWeek = firstDay.getDay();
+    // Filter events based on search and filters
+    const filteredEvents = useMemo(() => {
+        let result = events;
 
-        const days = [];
-        for (let i = 0; i < startingDayOfWeek; i++) {
-            days.push(null);
-        }
-        for (let i = 1; i <= daysInMonth; i++) {
-            days.push(new Date(year, month, i));
+        // Apply search
+        if (searchQuery.trim()) {
+            result = searchEvents(result, searchQuery);
         }
 
-        return days;
-    };
+        // Apply filters
+        activeFilters.forEach(filter => {
+            switch (filter.type) {
+                case 'category':
+                    result = getEventsByCategory(result, filter.value as any);
+                    break;
+                case 'priority':
+                    result = getEventsByPriority(result, filter.value as any);
+                    break;
+                case 'tag':
+                    result = filterEventsByTags(result, [filter.value]);
+                    break;
+            }
+        });
 
-    const getEventsForDate = (date: Date | null) => {
-        if (!date) return [];
-        return events.filter(event =>
-            event.date.toDateString() === date.toDateString()
-        );
-    };
+        return result;
+    }, [events, searchQuery, activeFilters]);
 
-    const previousMonth = () => {
-        setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1));
-    };
+    const upcomingEvents = getUpcomingEvents(filteredEvents, 5);
 
-    const nextMonth = () => {
-        setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1));
-    };
-
-    const isToday = (date: Date | null) => {
-        if (!date) return false;
-        const today = new Date();
-        return date.toDateString() === today.toDateString();
-    };
-
-    const days = getDaysInMonth(currentDate);
-    const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-    const monthName = currentDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-
-    const upcomingEvents = events
-        .filter(event => event.date >= new Date())
-        .sort((a, b) => a.date.getTime() - b.date.getTime())
-        .slice(0, 5);
-
-    const EventForm = ({
-        isEditing = false,
-        onCancel,
-        onSave
-    }: {
-        isEditing?: boolean;
-        onCancel: () => void;
-        onSave: () => void;
-    }) => (
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 mb-6">
-            <div className="space-y-4">
-                <input
-                    ref={isEditing ? undefined : newEventRef}
-                    type="text"
-                    value={isEditing ? editingTitle : newEventTitle}
-                    onChange={(e) => isEditing ? setEditingTitle(e.target.value) : setNewEventTitle(e.target.value)}
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                    placeholder="Título do evento"
-                />
-                <div className="grid grid-cols-2 gap-3">
-                    <input
-                        type="date"
-                        value={isEditing ? editingDate : newEventDate}
-                        onChange={(e) => isEditing ? setEditingDate(e.target.value) : setNewEventDate(e.target.value)}
-                        className="p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                    />
-                    <select
-                        value={isEditing ? editingType : newEventType}
-                        onChange={(e) => isEditing ? setEditingType(e.target.value as any) : setNewEventType(e.target.value as any)}
-                        className="p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                    >
-                        <option value="event">Evento</option>
-                        <option value="meeting">Reunião</option>
-                        <option value="task">Tarefa</option>
-                        <option value="reminder">Lembrete</option>
-                    </select>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                    <input
-                        type="time"
-                        value={isEditing ? editingStartTime : newEventStartTime}
-                        onChange={(e) => isEditing ? setEditingStartTime(e.target.value) : setNewEventStartTime(e.target.value)}
-                        className="p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                    />
-                    <input
-                        type="time"
-                        value={isEditing ? editingEndTime : newEventEndTime}
-                        onChange={(e) => isEditing ? setEditingEndTime(e.target.value) : setNewEventEndTime(e.target.value)}
-                        className="p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                    />
-                </div>
-                <input
-                    type="text"
-                    value={isEditing ? editingLocation : newEventLocation}
-                    onChange={(e) => isEditing ? setEditingLocation(e.target.value) : setNewEventLocation(e.target.value)}
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                    placeholder="Local (opcional)"
-                />
-                <input
-                    type="text"
-                    value={isEditing ? editingAttendees : newEventAttendees}
-                    onChange={(e) => isEditing ? setEditingAttendees(e.target.value) : setNewEventAttendees(e.target.value)}
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                    placeholder="Participantes (separados por vírgula, opcional)"
-                />
-                <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Cor:</span>
-                    <div className="flex gap-2">
-                        {['bg-blue-500', 'bg-green-500', 'bg-red-500', 'bg-purple-500', 'bg-yellow-500', 'bg-pink-500'].map(color => (
-                            <button
-                                key={color}
-                                onClick={() => isEditing ? setEditingColor(color) : setNewEventColor(color)}
-                                className={`w-6 h-6 rounded-full ${color} ${(isEditing ? editingColor : newEventColor) === color ? 'ring-2 ring-offset-2 ring-gray-400' : ''}`}
-                            />
-                        ))}
-                    </div>
-                </div>
-                <div className="flex justify-end gap-3">
-                    <button
-                        onClick={onCancel}
-                        className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
-                    >
-                        Cancelar
-                    </button>
-                    <button
-                        onClick={onSave}
-                        className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-md transition-colors"
-                    >
-                        {isEditing ? 'Atualizar Evento' : 'Criar Evento'}
-                    </button>
-                </div>
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-full">
+                <div className="text-gray-500">Carregando calendário...</div>
             </div>
-        </div>
-    );
+        );
+    }
 
     return (
         <div className="flex h-full">
             {/* Main Calendar */}
             <div className="flex-1 p-8 overflow-auto">
-                <header className="flex items-center justify-between mb-8">
-                    <div className="flex items-center gap-4">
-                        <h1 className="text-3xl font-bold text-gray-800">{monthName}</h1>
-                        <div className="flex items-center gap-2">
-                            <button
-                                onClick={previousMonth}
-                                className="p-2 hover:bg-gray-100 rounded-md transition-colors"
-                            >
-                                <ChevronLeft className="w-5 h-5 text-gray-600" />
-                            </button>
-                            <button
-                                onClick={nextMonth}
-                                className="p-2 hover:bg-gray-100 rounded-md transition-colors"
-                            >
-                                <ChevronRight className="w-5 h-5 text-gray-600" />
-                            </button>
-                            <button
-                                onClick={() => setCurrentDate(new Date())}
-                                className="px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
-                            >
-                                Hoje
-                            </button>
-                        </div>
+                {/* Header with Calendar controls and notifications */}
+                <div className="flex items-center justify-between mb-6">
+                    <CalendarHeader
+                        currentDate={currentDate}
+                        currentView={currentView}
+                        onNavigatePrevious={navigateToPrevious}
+                        onNavigateNext={navigateToNext}
+                        onNavigateToday={navigateToToday}
+                        onViewChange={setView}
+                        getNavigationLabel={getNavigationLabel}
+                    />
+
+                    <NotificationPanel
+                        notifications={notifications}
+                        settings={settings}
+                        unreadCount={unreadCount}
+                        onMarkAsRead={markAsRead}
+                        onMarkAllAsRead={markAllAsRead}
+                        onRemoveNotification={removeNotification}
+                        onClearAllNotifications={clearAllNotifications}
+                        onUpdateSettings={updateSettings}
+                        onRequestBrowserPermission={requestBrowserPermission}
+                        permission={permission}
+                    />
+                </div>
+
+                {/* Advanced Features Toolbar */}
+                <div className="flex items-center justify-between mb-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => setShowIntegrationPanel(!showIntegrationPanel)}
+                            className={`p-2 rounded-md text-sm font-medium transition-colors ${showIntegrationPanel
+                                ? 'bg-teal-600 text-white'
+                                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                                }`}
+                            title="Integração com Módulos"
+                        >
+                            <Settings className="w-4 h-4" />
+                        </button>
+
+                        <button
+                            onClick={() => setShowHistoryPanel(!showHistoryPanel)}
+                            className={`p-2 rounded-md text-sm font-medium transition-colors ${showHistoryPanel
+                                ? 'bg-teal-600 text-white'
+                                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                                }`}
+                            title="Histórico de Alterações"
+                        >
+                            <History className="w-4 h-4" />
+                        </button>
+
+                        <button
+                            onClick={() => setShowImportExportPanel(!showImportExportPanel)}
+                            className={`p-2 rounded-md text-sm font-medium transition-colors ${showImportExportPanel
+                                ? 'bg-teal-600 text-white'
+                                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                                }`}
+                            title="Importar/Exportar"
+                        >
+                            <Upload className="w-4 h-4" />
+                        </button>
+
+                        <button
+                            onClick={() => setShowAnalyticsPanel(!showAnalyticsPanel)}
+                            className={`p-2 rounded-md text-sm font-medium transition-colors ${showAnalyticsPanel
+                                ? 'bg-teal-600 text-white'
+                                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                                }`}
+                            title="Analytics e Relatórios"
+                        >
+                            <BarChart3 className="w-4 h-4" />
+                        </button>
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <button
-                            onClick={() => setView('day')}
-                            className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${view === 'day' ? 'bg-teal-50 text-teal-700' : 'text-gray-600 hover:bg-gray-100'
-                                }`}
-                        >
-                            Dia
-                        </button>
-                        <button
-                            onClick={() => setView('week')}
-                            className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${view === 'week' ? 'bg-teal-50 text-teal-700' : 'text-gray-600 hover:bg-gray-100'
-                                }`}
-                        >
-                            Semana
-                        </button>
-                        <button
-                            onClick={() => setView('month')}
-                            className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${view === 'month' ? 'bg-teal-50 text-teal-700' : 'text-gray-600 hover:bg-gray-100'
-                                }`}
-                        >
-                            Mês
-                        </button>
-                    </div>
-                </header>
+                        {/* Sync Status Indicator */}
+                        <div className="flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium">
+                            {offlineSync.isOfflineMode ? (
+                                <>
+                                    <WifiOff className="w-3 h-3 text-red-500" />
+                                    <span className="text-red-500">Offline</span>
+                                </>
+                            ) : (
+                                <>
+                                    <Wifi className="w-3 h-3 text-green-500" />
+                                    <span className="text-green-500">Online</span>
+                                </>
+                            )}
+                        </div>
 
-                {isCreatingNew && (
-                    <EventForm
-                        onCancel={() => {
-                            setIsCreatingNew(false);
-                            setNewEventTitle('');
-                            setNewEventDate('');
-                            setNewEventStartTime('');
-                            setNewEventEndTime('');
-                            setNewEventType('event');
-                            setNewEventLocation('');
-                            setNewEventAttendees('');
-                            setNewEventColor('bg-blue-500');
-                        }}
-                        onSave={createNewEvent}
+                        {offlineSync.syncQueue.length > 0 && (
+                            <div className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 rounded-full text-xs font-medium">
+                                {offlineSync.syncQueue.length} pendente(s)
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Search and Filters */}
+                <SearchFilter
+                    events={events}
+                    onSearch={setSearchQuery}
+                    onFilterChange={setActiveFilters}
+                    searchQuery={searchQuery}
+                    activeFilters={activeFilters}
+                />
+
+                {/* Conflict Detection */}
+                <ConflictDetector
+                    events={filteredEvents}
+                    onEventClick={handleEventClick}
+                />
+
+                {/* Calendar View */}
+                {currentView === 'month' && (
+                    <MonthView
+                        currentDate={currentDate}
+                        events={filteredEvents}
+                        onDateClick={handleDateClick}
+                        onEventClick={handleEventClick}
+                        onEventEdit={handleEventEdit}
+                        onEventDelete={deleteEvent}
                     />
                 )}
 
-                {/* Calendar Grid */}
-                <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                    {/* Week days header */}
-                    <div className="grid grid-cols-7 border-b border-gray-200 bg-gray-50">
-                        {weekDays.map(day => (
-                            <div key={day} className="p-3 text-center text-sm font-semibold text-gray-600">
-                                {day}
-                            </div>
-                        ))}
-                    </div>
+                {currentView === 'week' && (
+                    <WeekView
+                        currentDate={currentDate}
+                        events={filteredEvents}
+                        onDateClick={handleDateClick}
+                        onEventClick={handleEventClick}
+                        onEventEdit={handleEventEdit}
+                        onEventDelete={deleteEvent}
+                        onEventDrop={handleEventDrop}
+                        onEventResize={handleEventResize}
+                    />
+                )}
 
-                    {/* Calendar days */}
-                    <div className="grid grid-cols-7">
-                        {days.map((date, index) => {
-                            const events = getEventsForDate(date);
-                            return (
-                                <div
-                                    key={index}
-                                    className={`min-h-[120px] border-b border-r border-gray-100 p-2 ${!date ? 'bg-gray-50' : 'bg-white hover:bg-gray-50'
-                                        } transition-colors`}
-                                >
-                                    {date && (
-                                        <>
-                                            <div className={`text-sm font-medium mb-1 ${isToday(date)
-                                                ? 'inline-flex items-center justify-center w-7 h-7 rounded-full bg-teal-600 text-white'
-                                                : 'text-gray-700'
-                                                }`}>
-                                                {date.getDate()}
-                                            </div>
-                                            <div className="space-y-1">
-                                                {events.map(event => (
-                                                    <div
-                                                        key={event.id}
-                                                        className={`text-xs ${event.color} text-white px-2 py-1 rounded truncate cursor-pointer hover:opacity-90 transition-opacity relative`}
-                                                        title={event.title}
-                                                    >
-                                                        {event.startTime} {event.title}
-                                                        <button
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                setShowOptions(showOptions === event.id ? null : event.id);
-                                                            }}
-                                                            className="absolute right-1 top-1 opacity-0 hover:opacity-100"
-                                                        >
-                                                            <MoreHorizontal className="w-3 h-3 text-white" />
-                                                        </button>
-
-                                                        {showOptions === event.id && (
-                                                            <div className="absolute z-10 right-0 top-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg">
-                                                                <button
-                                                                    onClick={(e) => {
-                                                                        e.stopPropagation();
-                                                                        startEditing(event);
-                                                                    }}
-                                                                    className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                                                                >
-                                                                    <Edit className="w-4 h-4" />
-                                                                    Editar
-                                                                </button>
-                                                                <button
-                                                                    onClick={(e) => {
-                                                                        e.stopPropagation();
-                                                                        deleteEvent(event.id);
-                                                                    }}
-                                                                    className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700"
-                                                                >
-                                                                    <Trash2 className="w-4 h-4" />
-                                                                    Excluir
-                                                                </button>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </>
-                                    )}
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
+                {currentView === 'day' && (
+                    <DayView
+                        currentDate={currentDate}
+                        events={filteredEvents}
+                        onDateClick={handleDateClick}
+                        onEventClick={handleEventClick}
+                        onEventEdit={handleEventEdit}
+                        onEventDelete={deleteEvent}
+                        onEventDrop={handleEventDrop}
+                        onEventResize={handleEventResize}
+                    />
+                )}
             </div>
 
             {/* Sidebar with upcoming events */}
-            <div className="w-80 border-l border-gray-200 bg-gray-50 p-6 overflow-auto">
-                <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <div className="w-80 border-l border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 p-6 overflow-auto">
+                <h2 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center gap-2">
                     <CalendarIcon className="w-5 h-5 text-teal-600" />
                     Próximos Eventos
                 </h2>
 
-                {editingEventId && (
-                    <EventForm
-                        isEditing={true}
-                        onCancel={cancelEdit}
-                        onSave={saveEdit}
-                    />
-                )}
-
                 <div className="space-y-3 mb-6">
                     {upcomingEvents.map(event => (
-                        <div key={event.id} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer relative">
-                            <div className="flex items-start gap-3">
-                                <div className={`w-1 h-full ${event.color} rounded-full`} />
-                                <div className="flex-1">
-                                    <h3 className="font-semibold text-gray-800 mb-1">{event.title}</h3>
-                                    <div className="space-y-1 text-xs text-gray-600">
-                                        <div className="flex items-center gap-2">
-                                            <CalendarIcon className="w-3.5 h-3.5" />
-                                            <span>{event.date.toLocaleDateString('pt-BR', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <Clock className="w-3.5 h-3.5" />
-                                            <span>{event.startTime} - {event.endTime}</span>
-                                        </div>
-                                        {event.location && (
-                                            <div className="flex items-center gap-2">
-                                                <MapPin className="w-3.5 h-3.5" />
-                                                <span>{event.location}</span>
-                                            </div>
-                                        )}
-                                        {event.attendees && (
-                                            <div className="flex items-center gap-2">
-                                                <Users className="w-3.5 h-3.5" />
-                                                <span>{event.attendees.join(', ')}</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                            <button
-                                onClick={() => setShowOptions(showOptions === event.id ? null : event.id)}
-                                className="absolute top-2 right-2 p-1 hover:bg-gray-100 rounded-md"
-                            >
-                                <MoreHorizontal className="w-4 h-4 text-gray-400" />
-                            </button>
-
-                            {showOptions === event.id && (
-                                <div className="absolute z-10 right-2 top-8 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg">
-                                    <button
-                                        onClick={() => startEditing(event)}
-                                        className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                                    >
-                                        <Edit className="w-4 h-4" />
-                                        Editar
-                                    </button>
-                                    <button
-                                        onClick={() => deleteEvent(event.id)}
-                                        className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700"
-                                    >
-                                        <Trash2 className="w-4 h-4" />
-                                        Excluir
-                                    </button>
-                                </div>
-                            )}
+                        <div key={event.id}>
+                            <EventItem
+                                event={event}
+                                onEdit={handleEventEdit}
+                                onDelete={deleteEvent}
+                            />
                         </div>
                     ))}
                 </div>
 
-                {!isCreatingNew && !editingEventId && (
+                {!isModalOpen && (
                     <button
-                        onClick={() => setIsCreatingNew(true)}
-                        className="w-full flex items-center justify-center gap-2 p-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-teal-400 hover:text-teal-600 transition-colors"
+                        onClick={() => openModal(selectedDate || new Date())}
+                        className="w-full flex items-center justify-center gap-2 p-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-gray-500 dark:text-gray-400 hover:border-teal-400 hover:text-teal-600 dark:hover:border-teal-500 dark:hover:text-teal-400 transition-colors"
                     >
                         <Plus className="w-5 h-5" />
                         <span className="font-medium">Adicionar evento</span>
                     </button>
                 )}
             </div>
+
+            {/* Event Modal */}
+            <EventModal
+                isOpen={isModalOpen}
+                isEditing={isEditing}
+                formData={formData}
+                titleInputRef={titleInputRef}
+                onClose={handleCancel}
+                onSave={handleSave}
+                onDelete={isEditing ? handleDelete : undefined}
+                onDuplicate={isEditing ? handleDuplicate : undefined}
+                onTitleChange={setTitle}
+                onDescriptionChange={setDescription}
+                onStartDateChange={setStartDate}
+                onEndDateChange={setEndDate}
+                onIsAllDayChange={setIsAllDay}
+                onCategoryChange={setCategory}
+                onPriorityChange={setPriority}
+                onLocationChange={setLocation}
+                onAttendeesChange={setAttendees}
+                onColorChange={setColor}
+                onTagsChange={setTags}
+                onRemindersChange={setReminders}
+                onRecurrenceChange={setRecurrence}
+            />
+
+            {/* Fase 3: Advanced Panels - Simplified Implementation */}
+            {showIntegrationPanel && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full max-h-[80vh] overflow-auto">
+                        <h2 className="text-xl font-bold mb-4">Integração com Módulos</h2>
+                        <p className="text-gray-600 dark:text-gray-400 mb-4">
+                            Funcionalidade de integração com tarefas e notas em desenvolvimento.
+                        </p>
+                        <button
+                            onClick={() => setShowIntegrationPanel(false)}
+                            className="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700"
+                        >
+                            Fechar
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {showHistoryPanel && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full max-h-[80vh] overflow-auto">
+                        <h2 className="text-xl font-bold mb-4">Histórico de Alterações</h2>
+                        <p className="text-gray-600 dark:text-gray-400 mb-4">
+                            Funcionalidade de histórico em desenvolvimento.
+                        </p>
+                        <button
+                            onClick={() => setShowHistoryPanel(false)}
+                            className="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700"
+                        >
+                            Fechar
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {showImportExportPanel && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full max-h-[80vh] overflow-auto">
+                        <h2 className="text-xl font-bold mb-4">Importar/Exportar</h2>
+                        <p className="text-gray-600 dark:text-gray-400 mb-4">
+                            Funcionalidade de importação/exportação em desenvolvimento.
+                        </p>
+                        <button
+                            onClick={() => setShowImportExportPanel(false)}
+                            className="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700"
+                        >
+                            Fechar
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {showAnalyticsPanel && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full max-h-[80vh] overflow-auto">
+                        <h2 className="text-xl font-bold mb-4">Analytics e Relatórios</h2>
+                        <p className="text-gray-600 dark:text-gray-400 mb-4">
+                            Funcionalidade de analytics em desenvolvimento.
+                        </p>
+                        <button
+                            onClick={() => setShowAnalyticsPanel(false)}
+                            className="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700"
+                        >
+                            Fechar
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {showRecurrenceEditor && selectedEventForRecurrence && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full max-h-[80vh] overflow-auto">
+                        <h2 className="text-xl font-bold mb-4">Editor de Recorrência</h2>
+                        <p className="text-gray-600 dark:text-gray-400 mb-4">
+                            Funcionalidade de recorrência em desenvolvimento.
+                        </p>
+                        <button
+                            onClick={() => {
+                                setShowRecurrenceEditor(false);
+                                setSelectedEventForRecurrence(null);
+                            }}
+                            className="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700"
+                        >
+                            Fechar
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Sync Status Indicator (Floating) */}
+            {!offlineSync.isOfflineMode && offlineSync.syncQueue.length > 0 && (
+                <div className="fixed bottom-4 right-4 bg-yellow-100 dark:bg-yellow-900/80 text-yellow-800 dark:text-yellow-200 px-4 py-2 rounded-lg shadow-lg flex items-center gap-2">
+                    <Activity className="w-4 h-4 animate-spin" />
+                    <span className="text-sm font-medium">
+                        Sincronizando {offlineSync.syncQueue.length} item(s)...
+                    </span>
+                </div>
+            )}
         </div>
     );
 };
